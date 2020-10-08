@@ -18,7 +18,6 @@
 - File类和IO流
 - Java8新特性
 - JDBC
-- UML类图
 
 #### JavaWeb
 
@@ -27,11 +26,12 @@
 - JQuery
 - Servelet
 - Filter
-- XML
 - JSON
 - Ajax
 
 #### MySQL
+
+- MySQL
 
 #### Spring
 
@@ -44,11 +44,17 @@
 
 #### 中间件
 
-- Tomcat
 - Redis
 - RabbitMQ
 - ElasticSearch
 - Docker
-- Docker
 
-#### Git
+#### Tools
+
+- Tomcat
+
+- XML
+- Git
+- Navcat
+- Jmeter
+- UML类图
