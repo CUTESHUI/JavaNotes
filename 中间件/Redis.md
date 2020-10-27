@@ -577,6 +577,7 @@ sentinel client-reconfig-script mymaster /var/redis/reconfig.sh
     - 在访问 key 之前，采用 SETNX（set if not exists）来设置另一个短期 key 来锁住当前 key 的访问
     - 访问结束再删除该短期 key
     - 保证同时刻只有一个线程访问，这样对锁的要求就十分高
+  - 多级缓存
 
 
 
@@ -604,6 +605,7 @@ sentinel client-reconfig-script mymaster /var/redis/reconfig.sh
   - 数据预热
     - 在正式部署之前，我先把可能的数据先预先访问一遍，这样部分可能大量访问的数据就会加载到缓存中
     - 在即将发生大并发访问前手动触发加载缓存不同的 key，设置不同的过期时间，让缓存失效的时间点尽量均匀
+  - 多级缓存
 
 
 

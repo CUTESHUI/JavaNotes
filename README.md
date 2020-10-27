@@ -33,6 +33,10 @@
 
 - MySQL
 
+#### Oracle
+
+- Oracle
+
 #### Spring
 
 - Spring
@@ -51,10 +55,22 @@
 
 #### Tools
 
-- Tomcat
+- Docker
 
 - XML
 - Git
 - Navcat
 - Jmeter
 - UML类图
+
+#### 中间件
+
+- Tomcat
+- Redis
+- RabbitMQ
+- Zookeeper
+- ElasticSearch
+
+#### Others
+
+- 监控、链路、日志
