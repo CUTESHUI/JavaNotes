@@ -19,6 +19,10 @@
 - Java8新特性
 - JDBC
 
+#### JavaAdvance
+
+- Netty
+
 #### JavaWeb
 
 - HTML、CSS
@@ -42,18 +46,10 @@
 #### Spring
 
 - Spring
-
 - SpringMVC
-
 - SpringBoot
 - SpringCloud
-
-#### 中间件
-
-- Redis
-- RabbitMQ
-- ElasticSearch
-- Docker
+- SpringCloudSecurity_OAuth2
 
 #### Tools
 
@@ -61,7 +57,6 @@
 
 - XML
 - Git
-- Navcat
 - Jmeter
 - UML类图
 
@@ -72,9 +67,8 @@
 - RabbitMQ
 - Zookeeper
 - ElasticSearch
-- Netty
+- Sentinel
 
 #### Others
 
 - 监控、链路、日志
-- 

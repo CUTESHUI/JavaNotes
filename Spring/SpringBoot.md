@@ -1507,7 +1507,7 @@ public class MyMvcConfig extends WebMvcConfigurerAdapter {
   - 开发期间模板引擎页面修改以后，要实时生效
   - 禁用模板引擎的缓存
 
-  ```
+  ```bash
   # 禁用缓存
   spring.thymeleaf.cache=false 
   ```
@@ -2152,9 +2152,9 @@ public class MyMvcConfig extends WebMvcConfigurerAdapter {
     ```
     
 - EmbeddedServletContainer：嵌入式的 Servlet 容器
-    
+  
 - 以 TomcatEmbeddedServletContainerFactory 为例
-    
+  
 ```java
     @Override
     public EmbeddedServletContainer getEmbeddedServletContainer(
@@ -2179,20 +2179,20 @@ public class MyMvcConfig extends WebMvcConfigurerAdapter {
         //将配置好的Tomcat传入进去，返回一个EmbeddedServletContainer；并且启动Tomcat服务器
        return getTomcatEmbeddedServletContainer(tomcat);
     }
-    ```
-    
-    - 我们对嵌入式容器的配置修改是怎么生效？
+```
 
+    - 我们对嵌入式容器的配置修改是怎么生效？
+    
       ```
   ServerProperties、EmbeddedServletContainerCustomizer
       ```
     
     - EmbeddedServletContainerCustomizer：定制器，帮我们修改了 Servlet容器的配置
-
+    
       怎么修改？
-
+    
     - 容器中导入了 EmbeddedServletContainerCustomizerBeanPostProcessor
-
+    
     ```java
 //初始化之前
     @Override
@@ -2238,7 +2238,7 @@ public class MyMvcConfig extends WebMvcConfigurerAdapter {
       2. 容器中某个组件要创建对象就会惊动后置处理器：EmbeddedServletContainerCustomizerBeanPostProcessor
       3. 只要是嵌入式的Servlet容器工厂，后置处理器就工作
       4. 后置处理器工作后，从容器中获取所有的 EmbeddedServletContainerCustomizer，调用定制器的定制方法，去定制比如TomcatEmbeddedServletContainer的配置
-    
+
   - **嵌入式Servlet容器启动原理**
 
     - 获取嵌入式的Servlet容器工厂
@@ -2631,9 +2631,9 @@ public class DruidConfig {
       - 编写一个Dao接口来操作实体类对应的数据表（Repository）
       
       ```java
-        //继承JpaRepository来完成对数据库的操作
-        public interface UserRepository extends JpaRepository<User,Integer> {
-        }
+      //继承JpaRepository来完成对数据库的操作
+      public interface UserRepository extends JpaRepository<User,Integer> {
+      }
       ```
       
       - 基本的配置JpaProperties
@@ -2879,152 +2879,144 @@ org.springframework.boot.autoconfigure.aop.AopAutoConfiguration,\
 
 
   ```xml
-  <?xml version="1.0" encoding="UTF-8"?>
-  <project xmlns="http://maven.apache.org/POM/4.0.0"
-           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-           xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-      <modelVersion>4.0.0</modelVersion>
-  
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <groupId>com.atguigu.starter</groupId>
+  <artifactId>atguigu-spring-boot-starter</artifactId>
+  <version>1.0-SNAPSHOT</version>
+
+  <!--启动器-->
+  <dependencies>
+
+    <!--引入自动配置模块-->
+    <dependency>
       <groupId>com.atguigu.starter</groupId>
-      <artifactId>atguigu-spring-boot-starter</artifactId>
-      <version>1.0-SNAPSHOT</version>
-  
-      <!--启动器-->
-      <dependencies>
-  
-          <!--引入自动配置模块-->
-          <dependency>
-              <groupId>com.atguigu.starter</groupId>
-              <artifactId>atguigu-spring-boot-starter-autoconfigurer</artifactId>
-              <version>0.0.1-SNAPSHOT</version>
-          </dependency>
-      </dependencies>
-  
-  </project>
+      <artifactId>atguigu-spring-boot-starter-autoconfigurer</artifactId>
+      <version>0.0.1-SNAPSHOT</version>
+    </dependency>
+  </dependencies>
+
+</project>
   ```
 
   - 自动配置模块
 
 
   ```xml
-  <?xml version="1.0" encoding="UTF-8"?>
-  <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-     xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-     <modelVersion>4.0.0</modelVersion>
-  
-     <groupId>com.atguigu.starter</groupId>
-     <artifactId>atguigu-spring-boot-starter-autoconfigurer</artifactId>
-     <version>0.0.1-SNAPSHOT</version>
-     <packaging>jar</packaging>
-  
-     <name>atguigu-spring-boot-starter-autoconfigurer</name>
-     <description>Demo project for Spring Boot</description>
-  
-     <parent>
-        <groupId>org.springframework.boot</groupId>
-        <artifactId>spring-boot-starter-parent</artifactId>
-        <version>1.5.10.RELEASE</version>
-        <relativePath/> <!-- lookup parent from repository -->
-     </parent>
-  
-     <properties>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <java.version>1.8</java.version>
-     </properties>
-  
-     <dependencies>
-  
-        <!--引入spring-boot-starter；所有starter的基本配置-->
-        <dependency>
-           <groupId>org.springframework.boot</groupId>
-           <artifactId>spring-boot-starter</artifactId>
-        </dependency>
-  
-     </dependencies>
-  
-  </project>
-  
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <groupId>com.atguigu.starter</groupId>
+  <artifactId>atguigu-spring-boot-starter-autoconfigurer</artifactId>
+  <version>0.0.1-SNAPSHOT</version>
+  <packaging>jar</packaging>
+
+  <name>atguigu-spring-boot-starter-autoconfigurer</name>
+  <description>Demo project for Spring Boot</description>
+
+  <parent>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-parent</artifactId>
+    <version>1.5.10.RELEASE</version>
+    <relativePath/> <!-- lookup parent from repository -->
+  </parent>
+
+  <properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+    <java.version>1.8</java.version>
+  </properties>
+
+  <dependencies>
+
+    <!--引入spring-boot-starter；所有starter的基本配置-->
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter</artifactId>
+    </dependency>
+
+  </dependencies>
+
+</project>
   ```
 
   ```java
-  package com.atguigu.starter;
-  
-  import org.springframework.boot.context.properties.ConfigurationProperties;
-  
-  @ConfigurationProperties(prefix = "atguigu.hello")
-  public class HelloProperties {
-  
-      private String prefix;
-      private String suffix;
-  
-      public String getPrefix() {
-          return prefix;
-      }
-  
-      public void setPrefix(String prefix) {
-          this.prefix = prefix;
-      }
-  
-      public String getSuffix() {
-          return suffix;
-      }
-  
-      public void setSuffix(String suffix) {
-          this.suffix = suffix;
-      }
+package com.atguigu.starter;
+
+import org.springframework.boot.context.properties.ConfigurationProperties;
+
+@ConfigurationProperties(prefix = "atguigu.hello")
+public class HelloProperties {
+
+  private String prefix;
+  private String suffix;
+
+  public String getPrefix() {
+    return prefix;
   }
-  
+
+  public void setPrefix(String prefix) {
+    this.prefix = prefix;
+  }
+
+  public String getSuffix() {
+    return suffix;
+  }
+
+  public void setSuffix(String suffix) {
+    this.suffix = suffix;
+  }
+}
   ```
 
   ```java
-  package com.atguigu.starter;
-  
-  public class HelloService {
-  
-      HelloProperties helloProperties;
-  
-      public HelloProperties getHelloProperties() {
-          return helloProperties;
-      }
-  
-      public void setHelloProperties(HelloProperties helloProperties) {
-          this.helloProperties = helloProperties;
-      }
-  
-      public String sayHellAtguigu(String name){
-          return helloProperties.getPrefix()+"-" +name + helloProperties.getSuffix();
-      }
+package com.atguigu.starter;
+
+public class HelloService {
+
+  HelloProperties helloProperties;
+
+  public HelloProperties getHelloProperties() {
+    return helloProperties;
   }
-  
+
+  public void setHelloProperties(HelloProperties helloProperties) {
+    this.helloProperties = helloProperties;
+  }
+
+  public String sayHellAtguigu(String name){
+    return helloProperties.getPrefix()+"-" +name + helloProperties.getSuffix();
+  }
+}
   ```
 
   ```java
-  package com.atguigu.starter;
-  
-  import org.springframework.beans.factory.annotation.Autowired;
-  import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
-  import org.springframework.boot.context.properties.EnableConfigurationProperties;
-  import org.springframework.context.annotation.Bean;
-  import org.springframework.context.annotation.Configuration;
-  
-  @Configuration
-  @ConditionalOnWebApplication //web应用才生效
-  @EnableConfigurationProperties(HelloProperties.class)
-  public class HelloServiceAutoConfiguration {
-  
-      @Autowired
-      HelloProperties helloProperties;
-      @Bean
-      public HelloService helloService(){
-          HelloService service = new HelloService();
-          service.setHelloProperties(helloProperties);
-          return service;
-      }
+package com.atguigu.starter;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+
+@Configuration
+@ConditionalOnWebApplication //web应用才生效
+@EnableConfigurationProperties(HelloProperties.class)
+public class HelloServiceAutoConfiguration {
+
+  @Autowired
+  HelloProperties helloProperties;
+  @Bean
+  public HelloService helloService(){
+    HelloService service = new HelloService();
+    service.setHelloProperties(helloProperties);
+    return service;
   }
+}
   ```
-
-
-
-
-#### 十四、

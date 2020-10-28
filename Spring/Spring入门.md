@@ -75,7 +75,7 @@ Spring可以分为6大模块：
 
   spring对orm的支持
 
-- 1. 可以与 hibernate 整合
+  可以与 hibernate 整合
 
 - 2. 可以使用spring 的对 hibernate 操作的封装
 

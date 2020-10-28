@@ -71,13 +71,12 @@ var json = JSON.stringify({a: 'Hello', b: 'World'});
 ```
 
 - FastJSON 三个主要的类
-  - **JSONObject 代表 json 对象** 
-    - JSONObject 实现了 Map接口，猜想  JSONObject 底层操作是由Map实现的
-    - JSONObject 对应json对象，通过各种形式的get( )可以获取 json对象中的数据，也可利用诸如 size( )，isEmpty( )等方法获取"键：值"对的个数和判断是否为空
-    - 其本质是通过实现 Map接口并调用接口中的方法完成
+  - JSONObject 代表 json 对象 
+    - 实现了 Map接口，其本质是通过实现 Map 接口并调用接口中的方法完成操作
+    - 通过各种形式的 get( ) 获取 json对象中的数据
+    - 通过 size( )，isEmpty( )等方法获取 "键 ：值" 对的个数和判断是否为空
 
-  - **JSONArray 代表 json 对象数组**
-    - 内部是有 List 接口中的方法来完成操作的。
-  - **JSON 代表 JSONObject 和 JSONArray 的转化**
-    - JSON类源码分析与使用
+  - JSONArray 代表 json 对象数组
+    - 内部是有 List 接口中的方法来完成操作
+  - JSON 代表 JSONObject 和 JSONArray 的转化
     - 仔细观察这些方法，主要是实现 json对象、json对象数组、javabean对象、json字符串之间的相互转化

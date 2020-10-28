@@ -6,6 +6,4 @@ If you lose this password, please consult the section How to Reset the Root Pass
 
 #### **chimanloo1004**
 
-
-
 /usr/local/mysql/bin/mysql -u root -p
