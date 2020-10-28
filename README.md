@@ -28,6 +28,8 @@
 - Filter
 - JSON
 - Ajax
+- RESTful
+- SSO
 
 #### MySQL
 
@@ -70,7 +72,9 @@
 - RabbitMQ
 - Zookeeper
 - ElasticSearch
+- Netty
 
 #### Others
 
 - 监控、链路、日志
+- 
