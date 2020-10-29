@@ -22,6 +22,10 @@
 #### JavaAdvance
 
 - Netty
+- Activity
+- RPC
+- 分布式ID
+- API网关
 
 #### JavaWeb
 
@@ -34,10 +38,18 @@
 - Ajax
 - RESTful
 - SSO
+- VUE
+- JWT
+- CDN
+- SEO
+- XSS
+- CSRF
 
 #### MySQL
 
 - MySQL
+- MySQL常用操作
+- MySQL高性能优化
 
 #### Oracle
 
@@ -50,6 +62,7 @@
 - SpringBoot
 - SpringCloud
 - SpringCloudSecurity_OAuth2
+- Spring注解
 
 #### Tools
 
@@ -72,3 +85,7 @@
 #### Others
 
 - 监控、链路、日志
+
+#### 设计模式
+
+#### JVM
