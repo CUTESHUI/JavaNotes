@@ -26,6 +26,7 @@
 - RPC
 - 分布式ID
 - API网关
+- Jackson
 
 #### JavaWeb
 
@@ -67,11 +68,11 @@
 #### Tools
 
 - Docker
-
 - XML
 - Git
 - Jmeter
 - UML类图
+- Linux
 
 #### 中间件
 
@@ -89,3 +90,5 @@
 #### 设计模式
 
 #### JVM
+
+#### 大数据

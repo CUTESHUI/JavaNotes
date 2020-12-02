@@ -83,6 +83,9 @@
 ####  @RequestParam
 
 - @RequestParam 用于获取查询参数，都可以用
+- 常用于GetMapping
+- 请求头
+- String Integer 等
 
 
 
@@ -91,6 +94,14 @@
 - 用于读取 Request 请求（可能是 POST,PUT,DELETE,GET 请求）的 body 部分并且Content-Type 为 application/json 格式的数据
 - 接收到数据之后会自动将数据绑定到 Java 对象上去
 - 系统会使用 HttpMessageConverter 或者自定义的 HttpMessageConverter 将请求的 body 中的 json 字符串转换为 java 对象
+
+- 常用于PostMapping
+
+- 请求体
+- 集合、DTO、Entity
+
+
+
 - 一个请求方法只可以有一个@RequestBody，但是可以有多个@RequestParam 和 @PathVariable
 
 ---
