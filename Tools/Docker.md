@@ -25,7 +25,7 @@
 
 - ENTRYPOINT
 
-  - 指定docker容器启动时执行的命令，格式：
+  - 指定 docker 容器启动时执行的命令，格式：
 
   ```shell
   ENTRYPOINT ["executable", "param1","param2"...]Copy to clipboardErrorCopied
@@ -56,7 +56,7 @@
 
 - EXPOSE
 
-  - 声明需要暴露的端口(只声明不会打开端口)，格式：
+  - 声明需要暴露的端口（只声明不会打开端口），格式：
 
   ```shell
   EXPOSE <port1> <port2> ...Copy to clipboardErrorCopied
