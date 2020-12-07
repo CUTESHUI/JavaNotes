@@ -59,6 +59,7 @@
 #### Oracle
 
 - Oracle
+- Oracle优化
 
 #### Spring
 
@@ -106,5 +107,7 @@
 - Java编译器
 
 #### 大数据
+
+- Hadoop
 
 #### 云时代
