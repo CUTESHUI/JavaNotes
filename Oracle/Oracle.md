@@ -463,8 +463,6 @@ CREATE SEQUENCE sequence_name
 - 创建分区
   - Oracle 分区也是通过 create table 命令组成，但是对表进行分区时，得考虑一个字段作为分区建，通常按值的范围来划分分区
 
-
-
 ---
 
 ### merge into

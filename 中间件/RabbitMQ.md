@@ -1,6 +1,6 @@
 ## RabbitMQ
 
-#### 安装启动
+#### 启动关闭
 
 ```
 Last login: Tue Sep 15 23:51:33 on ttys001
@@ -102,7 +102,7 @@ Or, if you don't want/need a background service you can just run:
 
 
 
-#### 
+
 
 
 

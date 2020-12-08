@@ -1,17 +1,15 @@
 ## Tomcat8
 
+#### 启动关闭
+
 - 目录
-  
   - Library/Tomcat8
-  
 - 开启
   1. cd Library/Tomcat8/bin
   2. sudo sh ./startup.sh
-  
 - 关闭
   1. cd /usr/local/Tomcat8/bin
   2. sh ./shutdown.sh
-
 - 目录简单介绍
 
   - bin：启动和关闭tomcat的bat文件
