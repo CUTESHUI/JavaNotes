@@ -1,7 +1,5 @@
 ## SpringMVC
 
-
-
 #### 运行流程
 
 - 用户发送请求至前端控制器 DispatcherServlet
