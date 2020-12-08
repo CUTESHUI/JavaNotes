@@ -109,13 +109,13 @@ public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdap
     @Override
     public void configure(ClientDetailsServiceConfigurer clients) throws Exception {
         clients.inMemory()
-                .withClient("admin")//配置client_id
-                .secret(passwordEncoder.encode("admin123456"))//配置client_secret
-                .accessTokenValiditySeconds(3600)//配置访问token的有效期
-                .refreshTokenValiditySeconds(864000)//配置刷新token的有效期
-                .redirectUris("http://www.baidu.com")//配置redirect_uri，用于授权成功后跳转
-                .scopes("all")//配置申请的权限范围
-                .authorizedGrantTypes("authorization_code","password");//配置grant_type，表示授权类型
+                .withClient("admin")	//配置client_id
+                .secret(passwordEncoder.encode("admin123456"))	//配置client_secret
+                .accessTokenValiditySeconds(3600)			//配置访问token的有效期
+                .refreshTokenValiditySeconds(864000)	//配置刷新token的有效期
+                .redirectUris("http://www.baidu.com")	//配置redirect_uri，用于授权成功后跳转
+                .scopes("all")	//配置申请的权限范围
+                .authorizedGrantTypes("authorization_code","password");	//配置grant_type，表示授权类型
     }
 }
 ```
@@ -134,7 +134,7 @@ public class ResourceServerConfig extends ResourceServerConfigurerAdapter {
                 .authenticated()
                 .and()
                 .requestMatchers()
-                .antMatchers("/user/**");//配置需要保护的资源路径
+                .antMatchers("/user/**");	//配置需要保护的资源路径
     }
 }
 ```
@@ -217,7 +217,7 @@ public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdap
     public void configure(AuthorizationServerEndpointsConfigurer endpoints) {
         endpoints.authenticationManager(authenticationManager)
                 .userDetailsService(userService)
-                .tokenStore(tokenStore);//配置令牌存储策略
+                .tokenStore(tokenStore);	//配置令牌存储策略
     }
 
     // ...
