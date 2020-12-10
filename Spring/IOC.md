@@ -108,6 +108,8 @@
   - 最终是由 createBean 方法执行
     - createBean 方法生成需要的 Bean，并且对 Bean 初始化进行了处理（init-method 或者 Bean后置处理器等）
     - createBean 方法的 RootBeanDefinition 对象在 AbstractBeanFactory 的 doGetBean 方法里面生成
+  - createBean
+    - 
 
 
 

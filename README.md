@@ -28,7 +28,7 @@
 - 分布式ID
 - API网关
 - Jackson
-- MyBatis
+- MyBatisPlus
 - 正则表达式
 - 重新组织函数
 
