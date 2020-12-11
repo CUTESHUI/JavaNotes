@@ -12,7 +12,7 @@
 
   - 用于复制文件，格式：
 
-  ```
+  ```shell
   ADD <src> <dest>Copy to clipboardErrorCopied
   ```
 
@@ -42,15 +42,15 @@
 
   - 用于设置环境变量，格式：
 
-  ```
-   ENV <key> <value>Copy to clipboardErrorCopied
+  ```shell
+  ENV <key> <value>Copy to clipboardErrorCopied
   ```
 
   - 例子
   
   ```shell
-    # mysql运行时设置root密码
-    ENV MYSQL_ROOT_PASSWORD rootCopy to clipboardErrorCopied
+  # mysql运行时设置root密码
+  ENV MYSQL_ROOT_PASSWORD rootCopy to clipboardErrorCopied
   ```
 
 - EXPOSE
@@ -72,15 +72,15 @@
 
   - 指定所需依赖的基础镜像，格式：
 
-  ```
+  ```shell
   FROM <image>:<tag>Copy to clipboardErrorCopied
   ```
 
   - 例子
   
   ```shell
-    # 该镜像需要依赖的java8的镜像
-    FROM java:8Copy to clipboardErrorCopied
+  # 该镜像需要依赖的java8的镜像
+  FROM java:8Copy to clipboardErrorCopied
   ```
 
 - MAINTAINER
@@ -94,7 +94,7 @@
   - 例子
   
   ```shell
-    MAINTAINER macrozhengCopy to clipboardErrorCopied
+  MAINTAINER macrozhengCopy to clipboardErrorCopied
   ```
 
 
@@ -102,7 +102,7 @@
 
   - 在容器构建过程中执行的命令，我们可以用该命令自定义容器的行为，比如安装一些软件，创建一些文件等，格式：
 
-  ```
+  ```shell
   RUN <command>
   RUN ["executable", "param1","param2"...]Copy to clipboardErrorCopied
   ```
