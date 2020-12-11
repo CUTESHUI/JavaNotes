@@ -47,12 +47,11 @@
   ```
 
   - 例子
-
-
-    ```shell
-  # mysql运行时设置root密码
-  ENV MYSQL_ROOT_PASSWORD rootCopy to clipboardErrorCopied
-    ```
+  
+  ```shell
+    # mysql运行时设置root密码
+    ENV MYSQL_ROOT_PASSWORD rootCopy to clipboardErrorCopied
+  ```
 
 - EXPOSE
 
@@ -78,26 +77,24 @@
   ```
 
   - 例子
-
-
+  
   ```shell
-  # 该镜像需要依赖的java8的镜像
-  FROM java:8Copy to clipboardErrorCopied
+    # 该镜像需要依赖的java8的镜像
+    FROM java:8Copy to clipboardErrorCopied
   ```
 
 - MAINTAINER
 
   - 指定维护者的名字，格式：
 
-  ```
+  ```shell
   MAINTAINER <name>Copy to clipboardErrorCopied
   ```
 
   - 例子
-
-
+  
   ```shell
-  MAINTAINER macrozhengCopy to clipboardErrorCopied
+    MAINTAINER macrozhengCopy to clipboardErrorCopied
   ```
 
 

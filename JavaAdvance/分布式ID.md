@@ -82,8 +82,6 @@ set @@auto_increment_increment = 2;  -- 步长
 - 号段可以理解成批量获取，比如 DistributIdService 从数据库获取 ID时，如果能批量获取多个ID并缓存在本地的话，那样将大大提供业务应用获取ID的效率
 - 比如 DistributIdService 每次从数据库获取 ID 时，就获取一个号段，比如(1,1000]，这个范围表示了1000个ID，业务应用在请求 DistributIdService 提供ID时，DistributIdService 只需要在本地从1开始自增并返回即可，而不需要每次都请求数据库，一直到本地自增到1000时，也就是当前号段已经被用完时，才去数据库重新获取下一号段
 
-
-
 ```mysql
 CREATE TABLE id_generator (
   id int(10) NOT NULL,
