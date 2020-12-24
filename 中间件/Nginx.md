@@ -78,9 +78,9 @@ server
     #监听端口
     listen 80;
     #域名可以有多个，用空格隔开
-    server_name www.ha97.com ha97.com;
+    server_name www.shui.com man.com;
     index index.html index.htm index.php;
-    root /data/www/ha97;
+    root /data/www/shui;
     location ~ .*\.(php|php5)?$
     {
     fastcgi_pass 127.0.0.1:9000;
@@ -150,7 +150,9 @@ server
 }
 ```
 
-- 常用配置案例
+
+
+#### 常用配置案例
 
 ```bash
 user  nginx nginx;
@@ -240,7 +242,7 @@ http {
     #
     server {
         listen               *:80;
-        server_name          typecodes.com;
+        server_name          shui.com;
         # 不产生日志
         access_log off;
 
@@ -253,7 +255,7 @@ http {
         }
 
         location / {
-            return 301 https://typecodes.com$request_uri;
+            return 301 https://shui.com$request_uri;
         }
     }
 
@@ -365,5 +367,179 @@ http {
         #}
     }
 }
+```
+
+---
+
+#### 重定向 301
+
+```bash
+server {
+    listen      80;
+    server_name shui.cn;
+    
+    # 如果使用 shui.cn 直接访问，加前缀跳转
+    if ($host = 'shui.cn'){
+        return 301 https://www.shui.cn$request_uri;
+    }
+}
+```
+
+
+
+#### 全局 HTTPS
+
+```bash
+server {
+    listen      80;
+    server_name www.shui.cn;
+
+    # 单域名重定向
+    if ($host = 'www.shui.cn'){
+        return 301 https://www.shui.cn$request_uri;
+    }
+    # 全局非 https 协议时重定向
+    if ($scheme != 'https') {
+        return 301 https://$host$request_uri;
+    }
+
+    # 或者全部重定向
+    return 301 https://$host$request_uri;
+
+    # 以上配置选择自己需要的即可，不用全部加
+}
+```
+
+
+
+#### SSL 配置
+
+```bash
+listen      443 ssl http2 default_server; #http2支持，nginx1.9+支持
+server_name www.shui.cn;
+
+# nginx/1.15.0 以上使用 listen 443 ssl 代替 listen 443 和 ssl on
+# ssl on;
+# 证书路径
+ssl_certificate             /etc/letsencrypt/live/shui.cn/fullchain.pem;
+# 私钥路径
+ssl_certificate_key         /etc/letsencrypt/live/shui.cn/privkey.pem;
+ssl_session_cache           shared:SSL:10m;
+ssl_session_timeout         30m;
+# 浏览器已支持TLSv1.3，建议加上
+# TLSv1和TLSv1.1即将废弃，如果不需要支持IE和XP建议去掉
+# IE8-10/Win7需要TLSv1.0；IE8以下需要SSL3和单证书
+ssl_protocols               TLSv1.1 TLSv1.2 TLSv1.3;
+# on由服务器决定加密算法，off由浏览器决定
+# 推荐使用on，更安全，对服务器性能有少量影响
+ssl_prefer_server_ciphers   on;
+# 使用此套接字加密，推荐配置
+ssl_ciphers                 ECDHE-RSA-AES128-GCM-SHA256:ECDHE:ECDH:AES:HIGH:!NULL:!aNULL:!MD5:!ADH:!RC4:!DH:!DHE;
+
+# HSTS(ngx_http_headers_module is required) (180d)
+# 严格传输安全：即在时间过期之前，每次访问HTTP站点时，由客户端直接跳转到HTTPS站点
+# 设置后，该网站的HTTP站点无法打开，只能等待过期或禁用配置后清空浏览器缓存
+# 启用后注意保持证书不过期，证书过期后网站可能无法访问
+add_header Strict-Transport-Security "max-age=15552000" always;
+
+# 开启 OCSP Stapling，作用：由服务器在线查询证书吊销情况
+# 默认是由浏览器在线查询，由服务器查询效率更高
+ssl_stapling                on;
+
+# OCSP Stapling 验证开启
+ssl_stapling_verify         on;
+
+# OCSP Stapling 的证书位置（完整的证书链，可选）
+# ssl_trusted_certificate     /etc/letsencrypt/live/xinac.cn/chain.pem;
+
+# 配置用于查询 OCSP 服务器的DNS（可选）
+# resolver 223.5.5.5 223.6.6.6 valid=300s;
+
+# 查询域名超时时间（可选）
+# resolver_timeout 5s;
+```
+
+
+
+#### 反向代理
+
+```bash
+# 负载均衡，可以添加多个服务器，一般配合反代一起用
+# upstream的负载均衡，weight是权重，可以根据机器配置定义权重。weigth参数表示权值，权值越高被分配到的几率越大。
+upstream tomcat_cms {
+    ip_hash;
+    server    127.0.0.1:8801 weight=3 max_fails=3 fail_timeout=100s;
+    # server    127.0.0.1:8802 weight=2 max_fails=3 fail_timeout=100s;
+    # server    127.0.0.1:8803 weight=1 max_fails=3 fail_timeout=100s;
+}
+
+location /  {
+    # 设置主机头和客户端真实地址，以便服务器获取客户端真实IP
+    proxy_set_header Host $host;
+    proxy_set_header X-Real-IP $remote_addr;
+    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    proxy_set_header REMOTE-HOST $remote_addr;
+
+    # WebSocket支持
+    proxy_http_version 1.1;
+    proxy_set_header Upgrade $http_upgrade;
+    proxy_set_header Connection "Upgrade";
+    # proxy_connect_timeout 4s;
+    # proxy_read_timeout 60s;
+    # proxy_send_timeout 12s;
+
+    # 禁用缓存，根据需要配
+    # proxy_buffering off;
+
+    # 错误自定义选项，由后端服务响应错误码设为off，由nginx响应错误信息设为on
+    proxy_intercept_errors on;
+
+    # 此项可配负载服务器，或直接写内部访问地址
+    # proxy_pass  http://127.0.0.1:5212;
+    proxy_pass  http://tomcat_cms;
+}
+```
+
+
+
+#### Nginx 编译参数
+
+```bash
+# 生产环境建议编译参数：
+./configure --user=www --group=www \
+--prefix=/usr/local/nginx \
+--with-http_stub_status_module --with-http_ssl_module \
+--with-http_gzip_static_module --with-http_sub_module \
+--with-pcre
+
+# 常用编译参考参数：
+./configure --user=nginx --group=nginx \
+--prefix=/usr/local/nginx \
+--conf-path=/etc/nginx/nginx.conf \
+--error-log-path=/var/log/nginx/error.log \
+--http-log-path=/var/log/nginx/access.log \
+--pid-path=/var/run/nginx/nginx.pid \
+--lock-path=/var/lock/nginx.lock \
+--with-http_stub_status_module --with-http_ssl_module \
+--with-http_gzip_static_module --with-http_sub_module \
+--with-http_v2_module --with-http_mp4_module --with-http_flv_module \
+--http-client-body-temp-path=/var/tmp/nginx/client \
+--http-proxy-temp-path=/var/tmp/nginx/proxy \
+--http-fastcgi-temp-path=/var/tmp/nginx/fastcgi \
+--with-pcre --with-debug
+
+# 宝塔面板默认编译参数：
+nginx version: nginx/1.16.1
+built by gcc 4.8.5 20150623 (Red Hat 4.8.5-39) (GCC) 
+built with OpenSSL 1.1.1e  17 Mar 2020
+TLS SNI support enabled
+configure arguments: --user=www --group=www --prefix=/www/server/nginx --add-module=/www/server/nginx/src/ngx_devel_kit --add-module=/www/server/nginx/src/lua_nginx_module --add-module=/www/server/nginx/src/ngx_cache_purge --add-module=/www/server/nginx/src/nginx-sticky-module --with-openssl=/www/server/nginx/src/openssl --with-pcre=pcre-8.43 --with-http_v2_module --with-stream --with-stream_ssl_module --with-stream_ssl_preread_module --with-http_stub_status_module --with-http_ssl_module --with-http_image_filter_module --with-http_gzip_static_module --with-http_gunzip_module --with-ipv6 --with-http_sub_module --with-http_flv_module --with-http_addition_module --with-http_realip_module --with-http_mp4_module --with-ld-opt=-Wl,-E --with-cc-opt=-Wno-error --with-ld-opt=-ljemalloc --with-http_dav_module --add-module=/www/server/nginx/src/nginx-dav-ext-module
+
+# yum install nginx 使用的编译参数：
+nginx version: nginx/1.10.3
+built by gcc 4.4.7 20120313 (Red Hat 4.4.7-23) (GCC) 
+built with OpenSSL 1.0.1e-fips 11 Feb 2013
+TLS SNI support enabled
+configure arguments: --prefix=/usr/share/nginx --sbin-path=/usr/sbin/nginx --modules-path=/usr/lib64/nginx/modules --conf-path=/etc/nginx/nginx.conf --error-log-path=/var/log/nginx/error.log --http-log-path=/var/log/nginx/access.log --http-client-body-temp-path=/var/lib/nginx/tmp/client_body --http-proxy-temp-path=/var/lib/nginx/tmp/proxy --http-fastcgi-temp-path=/var/lib/nginx/tmp/fastcgi --http-uwsgi-temp-path=/var/lib/nginx/tmp/uwsgi --http-scgi-temp-path=/var/lib/nginx/tmp/scgi --pid-path=/var/run/nginx.pid --lock-path=/var/lock/subsys/nginx --user=nginx --group=nginx --with-file-aio --with-ipv6 --with-http_ssl_module --with-http_v2_module --with-http_realip_module --with-http_addition_module --with-http_xslt_module=dynamic --with-http_image_filter_module=dynamic --with-http_geoip_module=dynamic --with-http_sub_module --with-http_dav_module --with-http_flv_module --with-http_mp4_module --with-http_gunzip_module --with-http_gzip_static_module --with-http_random_index_module --with-http_secure_link_module --with-http_degradation_module --with-http_slice_module --with-http_stub_status_module --with-http_perl_module=dynamic --with-mail=dynamic --with-mail_ssl_module --with-pcre --with-pcre-jit --with-stream=dynamic --with-stream_ssl_module --with-debug --with-cc-opt='-O2 -g -pipe -Wall -Wp,-D_FORTIFY_SOURCE=2 -fexceptions -fstack-protector --param=ssp-buffer-size=4 -m64 -mtune=generic' --with-ld-opt=' -Wl,-E'
 ```
 

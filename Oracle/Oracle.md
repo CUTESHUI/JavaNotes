@@ -513,7 +513,44 @@ unpivot（自定义列名/*列的值*/ for 自定义列名 in（列名））
 
 ---
 
+#### 细节
 
+```ora
+进入回收站
+drop table users;
+
+查询回收站中的对象
+show recyclebin;
+
+闪回，即将回收站还原
+flashback table 表名 to before drop;
+flashback table 表名 to before drop rename to  新表名;
+
+彻底删除users表
+drop table users purge;
+
+清空回收站
+purge recyclebin;
+
+为emp表增加image列，alter table 表名 add 列名 类型(宽度) 
+alter table emp
+add image blob;
+
+修改ename列的长度为20个字节，alter table 表名 modify 列名 类型(宽度) 
+alter table emp
+modify ename varchar2(20);
+
+删除image列，alter table 表名 drop column 列名
+alter table emp
+drop column image;
+
+重名列名ename为username，alter table 表名 rename column 原列名 to 新列名
+alter table emp
+rename column ename to username;
+
+将emp表重命名emps，rename 原表名 to 新表名
+rename emp to emps;
+```
 
 
 
