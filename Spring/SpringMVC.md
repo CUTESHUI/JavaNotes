@@ -58,15 +58,78 @@ protected void initStrategies(ApplicationContext context) {
 
 
 
+#### **自定义 SpringMVC 配置**
 
+- 与自定义 SpringMVC 相关的类和注解主要有如下四个：
+  - WebMvcConfigurerAdapter
+  - WebMvcConfigurer
+  - WebMvcConfigurationSupport
+  - @EnableWebMvc
 
+- WebMvcConfigurerAdapter
 
+  - 这是在 Spring Boot 1.x 中自定义 SpringMVC 时继承的一个抽象类
 
+  - 实现了 WebMvcConfigurer 接口
 
+  - 空方法
 
+    ```java
+    /**
+     * An implementation of {@link WebMvcConfigurer} with empty methods allowing
+     * subclasses to override only the methods they're interested in.
+     * @deprecated as of 5.0 {@link WebMvcConfigurer} has default methods (made
+     * possible by a Java 8 baseline) and can be implemented directly without the
+     * need for this adapter
+     */
+    public abstract class WebMvcConfigurerAdapter implements WebMvcConfigurer {
+        //各种 SpringMVC 配置的方法
+    }
+    ```
 
+  - 从 Spring5 开始，由于使用 Java8，而 Java8 中的接口允许存在 default 方法，因此官方建议直接实现 WebMvcConfigurer 接口，而不是继承 WebMvcConfigurerAdapter 
 
+- WebMvcConfigurer
 
+  -  是 Spring Boot 2.x 中实现自定义配置的方案
+  -  是一个接口
+  - 接口中的方法和 WebMvcConfigurerAdapter 中定义的空方法其实一样，所以用法上，基本上没有差别
+  - 从 Spring Boot 1.x 切换到 Spring Boot 2.x ，只需要把继承类改成实现接口即可
+
+- WebMvcConfigurationSupport
+
+  - 方法和前面两个类中的方法基本一样
+
+  - 继承 WebMvcConfigurationSupport 这种操作一般只在 Java 配置的 SSM 项目中使用，Spring Boot 中基本上不会这么写
+
+    - 为什么?
+    - Spring Boot 中，SpringMVC 相关的自动化配置是在 WebMvcAutoConfiguration 配置类中实现的，是有生效条件的
+
+    ```java
+    @Configuration
+    @ConditionalOnWebApplication(type = Type.SERVLET)
+    @ConditionalOnClass({ Servlet.class, DispatcherServlet.class, WebMvcConfigurer.class })
+    @ConditionalOnMissingBean(WebMvcConfigurationSupport.class) // 条件
+    @AutoConfigureOrder(Ordered.HIGHEST_PRECEDENCE + 10)
+    @AutoConfigureAfter({ DispatcherServletAutoConfiguration.class, TaskExecutionAutoConfiguration.class,
+    		ValidationAutoConfiguration.class })
+    public class WebMvcAutoConfiguration {
+    }
+    ```
+
+    - 条件：当不存在 WebMvcConfigurationSupport 的实例时，这个自动化配置才会生生效
+
+- @EnableWebMvc
+
+  - 作用：启用 WebMvcConfigurationSupport
+  - 在 Spring Boot 中，不建议使用 @EnableWebMvc ，因为它一样会导致 Spring Boot 中的 SpringMVC 自动化配置失效
+
+- 总结
+  - Spring Boot 1.x 中，自定义 SpringMVC 配置可以通过继承 WebMvcConfigurerAdapter 来实现
+  - Spring Boot 2.x 中，自定义 SpringMVC 配置可以通过实现 WebMvcConfigurer 接口来完成
+  - 如果在 Spring Boot 中使用继承 WebMvcConfigurationSupport 来实现自定义 SpringMVC 配置，或者在 Spring Boot 中使用了 @EnableWebMvc 注解，都会导致 Spring Boot 中默认的 SpringMVC 自动化配置失效。
+  - 在纯 Java 配置的 SSM 环境中，如果要自定义 SpringMVC 配置，有两种办法，第一种就是直接继承自 WebMvcConfigurationSupport 来完成 SpringMVC 配置，还有一种方案就是实现 WebMvcConfigurer 接口来完成自定义 SpringMVC 配置，如果使用第二种方式，则需要给 SpringMVC 的配置类上额外添加 @EnableWebMvc 注解，表示启用 WebMvcConfigurationSupport，这样配置才会生效
+  - 在纯 Java 配置的 SSM 中，如果你需要自定义 SpringMVC 配置，离不开 WebMvcConfigurationSupport ，所以在这种情况下建议通过继承 WebMvcConfigurationSupport 来实现自动化配置
 
 
 

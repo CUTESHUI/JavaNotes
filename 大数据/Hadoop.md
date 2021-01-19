@@ -65,7 +65,7 @@
 
 
 
-#### Hadoop HDFS
+#### HDFS
 
 - HDFS 全称 Hadoop Distributed File System
 
