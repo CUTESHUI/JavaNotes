@@ -53,10 +53,9 @@ public void createActivitiEngine(){
     *  - 通过ProcessEngineConfiguration对象创建 ProcessEngine 对象
     */
 
-  //取得ProcessEngineConfiguration对象
-  ProcessEngineConfiguration engineConfiguration = ProcessEngineConfiguration.
-  createStandaloneProcessEngineConfiguration();
-  //设置数据库连接属性
+  // 取得ProcessEngineConfiguration对象
+  ProcessEngineConfiguration engineConfiguration = ProcessEngineConfiguration.createStandaloneProcessEngineConfiguration();
+  // 设置数据库连接属性
   engineConfiguration.setJdbcDriver("com.mysql.jdbc.Driver");
   engineConfiguration.setJdbcUrl("jdbc:mysql://localhost:3306/activitiDB?createDatabaseIfNotExist=true" + "&useUnicode=true&characterEncoding=utf8");
   engineConfiguration.setJdbcUsername("root");
@@ -68,7 +67,7 @@ public void createActivitiEngine(){
   // public static final java.lang.String DB_SCHEMA_UPDATE_CREATE_DROP = "create-drop";//先删除，再创建表
   // public static final java.lang.String DB_SCHEMA_UPDATE_TRUE = "true";//假如没有表，则自动创建
   engineConfiguration.setDatabaseSchemaUpdate("true");
-  //通过ProcessEngineConfiguration对象创建 ProcessEngine 对象
+  // 通过ProcessEngineConfiguration对象创建 ProcessEngine 对象
   ProcessEngine processEngine = engineConfiguration.buildProcessEngine();
   System.out.println("流程引擎创建成功!");
 
@@ -84,12 +83,12 @@ public void createActivitiEngine(){
 @Test
 public void deploy() {
 
-  //获取仓库服务 ：管理流程定义
+  // 获取仓库服务 ：管理流程定义
   RepositoryService repositoryService = processEngine.getRepositoryService();
-  Deployment deploy = repositoryService.createDeployment()//创建一个部署的构建器
-    .addClasspathResource("LeaveActiviti.bpmn")//从类路径中添加资源,一次只能添加一个资源
-    .name("请求单流程")//设置部署的名称
-    .category("办公类别")//设置部署的类别
+  Deployment deploy = repositoryService.createDeployment() //创建一个部署的构建器
+    .addClasspathResource("LeaveActiviti.bpmn") //从类路径中添加资源,一次只能添加一个资源
+    .name("请求单流程") //设置部署的名称
+    .category("办公类别") //设置部署的类别
     .deploy();
 
   System.out.println("部署的id"+deploy.getId());
@@ -111,27 +110,26 @@ public void startProcess(){
   // 取得流程实例
   // 通过流程定义的key 来执行流程
   ProcessInstance pi = runtimeService.startProcessInstanceByKey(processDefiKey);
-  System.out.println("流程实例id:"+pi.getId());//流程实例id
-  System.out.println("流程定义id:"+pi.getProcessDefinitionId());//输出流程定义的id
+  System.out.println("流程实例id:"+pi.getId()); //流程实例id
+  System.out.println("流程定义id:"+pi.getProcessDefinitionId()); //输出流程定义的id
 }
 ```
 
 5. 任务办理人查询当前任务的信息
 
 ```java
-//查询任务
+// 查询任务
 @Test
 public void queryTask(){
-  //任务的办理人
+  // 任务的办理人
   String assignee="tom";
-  //取得任务服务
+  // 取得任务服务
   TaskService taskService = processEngine.getTaskService();
-  //创建一个任务查询对象
+  // 创建一个任务查询对象
   TaskQuery taskQuery = taskService.createTaskQuery();
-  //办理人的任务列表
-  List<Task> list = taskQuery.taskAssignee(assignee)//指定办理人
-    .list();
-  //遍历任务列表
+  // 办理人的任务列表
+  List<Task> list = taskQuery.taskAssignee(assignee).list();
+  // 遍历任务列表
   if(list!=null&&list.size()>0){
     for(Task task:list){
       System.out.println("任务的办理人："+task.getAssignee());
@@ -146,11 +144,11 @@ public void queryTask(){
    - 查出任务id，就根据此id继续流程
 
 ```java
-//完成任务
+// 完成任务
 @Test
 public void compileTask(){
   String taskId="304";
-  //taskId：任务id
+  // taskId：任务id
   processEngine.getTaskService().complete(taskId);
   System.out.println("当前任务执行完毕");
 }

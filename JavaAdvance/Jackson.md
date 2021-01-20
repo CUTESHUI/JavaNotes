@@ -28,14 +28,14 @@
 
 ```java
 public class Demo {
-    public static void main(String[] args) throws JsonProcessingException {
-        Writer wanger = new Writer("tom", 18);
-        ObjectMapper mapper = new ObjectMapper();
-        String jsonString = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(wanger);
-        System.out.println(jsonString);
-    }
+  public static void main(String[] args) throws JsonProcessingException {
+    Writer wanger = new Writer("tom", 18);
+    ObjectMapper mapper = new ObjectMapper();
+    String jsonString = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(wanger);
+    System.out.println(jsonString);
+  }
 }
-  
+
 @Data
 class Writer{
   private String name;

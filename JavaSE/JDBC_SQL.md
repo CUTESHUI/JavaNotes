@@ -108,157 +108,140 @@
 ```java
 @Test
 public void testConnection1() {
-    try {
-        //1.提供java.sql.Driver接口实现类的对象
-        Driver driver = null;
-        driver = new com.mysql.jdbc.Driver();
+  try {
+    // 1.提供java.sql.Driver接口实现类的对象
+    Driver driver = null;
+    driver = new com.mysql.jdbc.Driver();
 
-        //2.提供url，指明具体操作的数据
-        String url = "jdbc:mysql://localhost:3306/test";
+    // 2.提供url，指明具体操作的数据
+    String url = "jdbc:mysql://localhost:3306/test";
 
-        //3.提供Properties的对象，指明用户名和密码
-        Properties info = new Properties();
-        info.setProperty("user", "root");
-        info.setProperty("password", "abc123");
+    // 3.提供Properties的对象，指明用户名和密码
+    Properties info = new Properties();
+    info.setProperty("user", "root");
+    info.setProperty("password", "abc123");
 
-        //4.调用driver的connect()，获取连接
-        Connection conn = driver.connect(url, info);
-        System.out.println(conn);
-    } catch (SQLException e) {
-        e.printStackTrace();
-    }
+    // 4.调用driver的connect()，获取连接
+    Connection conn = driver.connect(url, info);
+    System.out.println(conn);
+  } catch (SQLException e) {
+    e.printStackTrace();
+  }
 }
 
-//	显式出现了第三方数据库的API
+// 显式出现了第三方数据库的API
 ```
   - 连接方式二
 ```java
 @Test
-    public void testConnection2() {
-        try {
-            //1.实例化Driver
-            String className = "com.mysql.jdbc.Driver";
-            Class clazz = Class.forName(className);
-            Driver driver = (Driver) clazz.newInstance();
+public void testConnection2() {
+  try {
+    // 1.实例化Driver
+    String className = "com.mysql.jdbc.Driver";
+    Class clazz = Class.forName(className);
+    Driver driver = (Driver) clazz.newInstance();
 
-            //2.提供url，指明具体操作的数据
-            String url = "jdbc:mysql://localhost:3306/test";
+    // 2.提供url，指明具体操作的数据
+    String url = "jdbc:mysql://localhost:3306/test";
 
-            //3.提供Properties的对象，指明用户名和密码
-            Properties info = new Properties();
-            info.setProperty("user", "root");
-            info.setProperty("password", "abc123");
+    // 3.提供Properties的对象，指明用户名和密码
+    Properties info = new Properties();
+    info.setProperty("user", "root");
+    info.setProperty("password", "abc123");
 
-            //4.调用driver的connect()，获取连接
-            Connection conn = driver.connect(url, info);
-            System.out.println(conn);
+    // 4.调用driver的connect()，获取连接
+    Connection conn = driver.connect(url, info);
+    System.out.println(conn);
 
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
+  } catch (Exception e) {
+    e.printStackTrace();
+  }
+}
 
-//	使用反射实例化Driver，不在代码中体现第三方数据库的API。体现了面向接口编程思想。
+// 使用反射实例化Driver，不在代码中体现第三方数据库的API。体现了面向接口编程思想。
 ```
 
   - 连接方式三
 
 ```java
-  @Test
-      public void testConnection3() {
-          try {
-              //1.数据库连接的4个基本要素：
-              String url = "jdbc:mysql://localhost:3306/test";
-              String user = "root";
-              String password = "abc123";
-              String driverName = "com.mysql.jdbc.Driver";
-  
-              //2.实例化Driver
-              Class clazz = Class.forName(driverName);
-              Driver driver = (Driver) clazz.newInstance();
-              //3.注册驱动
-              DriverManager.registerDriver(driver);
-              //4.获取连接
-              Connection conn = DriverManager.getConnection(url, user, password);
-              System.out.println(conn);
-          } catch (Exception e) {
-              e.printStackTrace();
-          }
-  
-      }
-  
-  //	使用DriverManager实现数据库的连接。体会获取连接必要的4个基本要素。
+@Test
+public void testConnection3() {
+  try {
+    // 1.数据库连接的4个基本要素：
+    String url = "jdbc:mysql://localhost:3306/test";
+    String user = "root";
+    String password = "abc123";
+    String driverName = "com.mysql.jdbc.Driver";
+
+    // 2.实例化Driver
+    Class clazz = Class.forName(driverName);
+    Driver driver = (Driver) clazz.newInstance();
+    // 3.注册驱动
+    DriverManager.registerDriver(driver);
+    // 4.获取连接
+    Connection conn = DriverManager.getConnection(url, user, password);
+    System.out.println(conn);
+  } catch (Exception e) {
+    e.printStackTrace();
+  }
+
+}
+
+// 使用DriverManager实现数据库的连接。体会获取连接必要的4个基本要素。
 ```
 
   - 连接方式四
 
 ```java
 @Test
-    public void testConnection4() {
-        try {
-            //1.数据库连接的4个基本要素：
-            String url = "jdbc:mysql://localhost:3306/test";
-            String user = "root";
-            String password = "abc123";
-            String driverName = "com.mysql.jdbc.Driver";
+public void testConnection4() {
+  try {
+    // 1.数据库连接的4个基本要素：
+    String url = "jdbc:mysql://localhost:3306/test";
+    String user = "root";
+    String password = "abc123";
+    String driverName = "com.mysql.jdbc.Driver";
 
-            //2.加载驱动 （①实例化Driver ②注册驱动）
-            Class.forName(driverName);
+    // 2.加载驱动 （①实例化Driver ②注册驱动）
+    Class.forName(driverName);
 
+    // 3.获取连接
+    Connection conn = DriverManager.getConnection(url, user, password);
+    System.out.println(conn);
+  } catch (Exception e) {
+    e.printStackTrace();
+  }
 
-            //Driver driver = (Driver) clazz.newInstance();
-            //3.注册驱动
-            //DriverManager.registerDriver(driver);
-            /*
-            可以注释掉上述代码的原因，是因为在mysql的Driver类中声明有：
-            static {
-                try {
-                    DriverManager.registerDriver(new Driver());
-                } catch (SQLException var1) {
-                    throw new RuntimeException("Can't register driver!");
-                }
-            }
+}
 
-             */
-
-
-            //3.获取连接
-            Connection conn = DriverManager.getConnection(url, user, password);
-            System.out.println(conn);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-    }
-    
-//	不必显式的注册驱动了。因为在DriverManager的源码中已经存在静态代码块，实现了驱动的注册。
+// 不必显式的注册驱动了。因为在DriverManager的源码中已经存在静态代码块，实现了驱动的注册。
 ```
   - 连接方式五、终极版
 
 ```java
 @Test
-    public  void testConnection5() throws Exception {
-    	//1.加载配置文件
-        InputStream is = ConnectionTest.class.getClassLoader().getResourceAsStream("jdbc.properties");
-        Properties pros = new Properties();
-        pros.load(is);
-        
-        //2.读取配置信息
-        String user = pros.getProperty("user");
-        String password = pros.getProperty("password");
-        String url = pros.getProperty("url");
-        String driverClass = pros.getProperty("driverClass");
+public  void testConnection5() throws Exception {
+  // 1.加载配置文件
+  InputStream is = ConnectionTest.class.getClassLoader().getResourceAsStream("jdbc.properties");
+  Properties pros = new Properties();
+  pros.load(is);
 
-        //3.加载驱动
-        Class.forName(driverClass);
+  // 2.读取配置信息
+  String user = pros.getProperty("user");
+  String password = pros.getProperty("password");
+  String url = pros.getProperty("url");
+  String driverClass = pros.getProperty("driverClass");
 
-        //4.获取连接
-        Connection conn = DriverManager.getConnection(url,user,password);
-        System.out.println(conn);
+  // 3.加载驱动
+  Class.forName(driverClass);
 
-    }
+  // 4.获取连接
+  Connection conn = DriverManager.getConnection(url,user,password);
+  System.out.println(conn);
 
-//	使用配置文件的方式保存配置信息，在代码中加载配置文件
+}
+
+// 使用配置文件的方式保存配置信息，在代码中加载配置文件
 ```
 
 其中，配置文件声明在工程的src目录下：jdbc.properties
@@ -339,90 +322,87 @@ driverClass=com.mysql.jdbc.Driver
 - 使用PreparedStatement实现增、删、改操作
 
 ```java
- 
-	//通用的增、删、改操作（体现一：增、删、改 ； 体现二：针对于不同的表）
-	public void update(String sql,Object ... args){
-		Connection conn = null;
-		PreparedStatement ps = null;
-		try {
-			//1.获取数据库的连接
-			conn = JDBCUtils.getConnection();
-			
-			//2.获取PreparedStatement的实例 (或：预编译sql语句)
-			ps = conn.prepareStatement(sql);
-			//3.填充占位符
-			for(int i = 0;i < args.length;i++){
-				ps.setObject(i + 1, args[i]);
-			}
-			
-			//4.执行sql语句
-			ps.execute();
-		} catch (Exception e) {
-			
-			e.printStackTrace();
-		}finally{
-			//5.关闭资源
-			JDBCUtils.closeResource(conn, ps);
-			
-		}
-	}
+
+// 通用的增、删、改操作（体现一：增、删、改 ； 体现二：针对于不同的表）
+public void update(String sql,Object ... args){
+  Connection conn = null;
+  PreparedStatement ps = null;
+  try {
+    // 1.获取数据库的连接
+    conn = JDBCUtils.getConnection();
+
+    // 2.获取PreparedStatement的实例 (或：预编译sql语句)
+    ps = conn.prepareStatement(sql);
+    // 3.填充占位符
+    for(int i = 0;i < args.length;i++){
+      ps.setObject(i + 1, args[i]);
+    }
+
+    // 4.执行sql语句
+    ps.execute();
+  } catch (Exception e) {
+
+    e.printStackTrace();
+  }finally{
+    // 5.关闭资源
+    JDBCUtils.closeResource(conn, ps);
+
+  }
+}
 ```
 
 - 使用PreparedStatement实现查询操作
 
 ```javascript
 // 通用的针对于不同表的查询:返回一个对象 (version 1.0)
-	public <T> T getInstance(Class<T> clazz, String sql, Object... args) {	
-	Connection conn = null;
-	PreparedStatement ps = null;
-	ResultSet rs = null;
-	try {
-		// 1.获取数据库连接
-		conn = JDBCUtils.getConnection();
+public <T> T getInstance(Class<T> clazz, String sql, Object... args) {	
+  Connection conn = null;
+  PreparedStatement ps = null;
+  ResultSet rs = null;
+  try {
+    // 1.获取数据库连接
+    conn = JDBCUtils.getConnection();
 
-		// 2.预编译sql语句，得到PreparedStatement对象
-		ps = conn.prepareStatement(sql);
+    // 2.预编译sql语句，得到PreparedStatement对象
+    ps = conn.prepareStatement(sql);
 
-		// 3.填充占位符
-		for (int i = 0; i < args.length; i++) {
-			ps.setObject(i + 1, args[i]);
-		}
+    // 3.填充占位符
+    for (int i = 0; i < args.length; i++) {
+      ps.setObject(i + 1, args[i]);
+    }
 
-		// 4.执行executeQuery(),得到结果集：ResultSet
-		rs = ps.executeQuery();
+    // 4.执行executeQuery(),得到结果集：ResultSet
+    rs = ps.executeQuery();
 
-		// 5.得到结果集的元数据：ResultSetMetaData
-		ResultSetMetaData rsmd = rs.getMetaData();
+    // 5.得到结果集的元数据：ResultSetMetaData
+    ResultSetMetaData rsmd = rs.getMetaData();
 
-		// 6.1通过ResultSetMetaData得到columnCount,columnLabel；通过ResultSet得到列值
-		int columnCount = rsmd.getColumnCount();
-		if (rs.next()) {
-			T t = clazz.newInstance();
-			for (int i = 0; i < columnCount; i++) {// 遍历每一个列
+    // 6.1通过ResultSetMetaData得到columnCount,columnLabel；通过ResultSet得到列值
+    int columnCount = rsmd.getColumnCount();
+    if (rs.next()) {
+      T t = clazz.newInstance();
+      for (int i = 0; i < columnCount; i++) {// 遍历每一个列
 
-				// 获取列值
-				Object columnVal = rs.getObject(i + 1);
-				// 获取列的别名:列的别名，使用类的属性名充当
-				String columnLabel = rsmd.getColumnLabel(i + 1);
-				// 6.2使用反射，给对象的相应属性赋值
-				Field field = clazz.getDeclaredField(columnLabel);
-				field.setAccessible(true);
-				field.set(t, columnVal);
+        // 获取列值
+        Object columnVal = rs.getObject(i + 1);
+        // 获取列的别名:列的别名，使用类的属性名充当
+        String columnLabel = rsmd.getColumnLabel(i + 1);
+        // 6.2使用反射，给对象的相应属性赋值
+        Field field = clazz.getDeclaredField(columnLabel);
+        field.setAccessible(true);
+        field.set(t, columnVal);
+      }
+      return t;
+    }
+  } catch (Exception e) {
 
-			}
+    e.printStackTrace();
+  } finally {
+    // 7.关闭资源
+    JDBCUtils.closeResource(conn, ps, rs);
+  }
 
-			return t;
-
-		}
-	} catch (Exception e) {
-
-		e.printStackTrace();
-	} finally {
-		// 7.关闭资源
-		JDBCUtils.closeResource(conn, ps, rs);
-	}
-
-	return null;
+  return null;
 
 }
 ```
@@ -509,9 +489,9 @@ driverClass=com.mysql.jdbc.Driver
 - 向数据 中插入大数据类型
 
 ```java
-//获取连接
+// 获取连接
 Connection conn = JDBCUtils.getConnection();
-		
+
 String sql = "insert into customers(name,email,birth,photo)values(?,?,?,?)";
 PreparedStatement ps = conn.prepareStatement(sql);
 
@@ -522,9 +502,9 @@ ps.setDate(3, new Date(new java.util.Date().getTime()));
 // 操作Blob类型的变量
 FileInputStream fis = new FileInputStream("xhq.png");
 ps.setBlob(4, fis);
-//执行
+// 执行
 ps.execute();
-		
+
 fis.close();
 JDBCUtils.closeResource(conn, ps);
 ```
@@ -538,31 +518,31 @@ ps = conn.prepareStatement(sql);
 ps.setInt(1, 8);
 rs = ps.executeQuery();
 if(rs.next()){
-	Integer id = rs.getInt(1);
+  Integer id = rs.getInt(1);
   String name = rs.getString(2);
-	String email = rs.getString(3);
+  String email = rs.getString(3);
   Date birth = rs.getDate(4);
-	Customer cust = new Customer(id, name, email, birth);
+  Customer cust = new Customer(id, name, email, birth);
   System.out.println(cust); 
   //读取Blob类型的字段
-	Blob photo = rs.getBlob(5);
-	InputStream is = photo.getBinaryStream();
-	OutputStream os = new FileOutputStream("c.jpg");
-	byte [] buffer = new byte[1024];
-	int len = 0;
-	while((len = is.read(buffer)) != -1){
-		os.write(buffer, 0, len);
-	}
-    JDBCUtils.closeResource(conn, ps, rs);
-		
-	if(is != null){
-		is.close();
-	}
-		
-	if(os !=  null){
-		os.close();
-	}
-    
+  Blob photo = rs.getBlob(5);
+  InputStream is = photo.getBinaryStream();
+  OutputStream os = new FileOutputStream("c.jpg");
+  byte [] buffer = new byte[1024];
+  int len = 0;
+  while((len = is.read(buffer)) != -1){
+    os.write(buffer, 0, len);
+  }
+  JDBCUtils.closeResource(conn, ps, rs);
+
+  if(is != null){
+    is.close();
+  }
+
+  if(os !=  null){
+    os.close();
+  }
+
 }
 ```
 
@@ -597,113 +577,113 @@ NAME VARCHAR(20)
 Connection conn = JDBCUtils.getConnection();
 Statement st = conn.createStatement();
 for(int i = 1;i <= 20000;i++){
-	String sql = "insert into goods(name) values('name_' + "+ i +")";
-	st.executeUpdate(sql);
+  String sql = "insert into goods(name) values('name_' + "+ i +")";
+  st.executeUpdate(sql);
 }
 ```
 
 -   方法二：：使用PreparedStatement
 
 ```java
-  long start = System.currentTimeMillis();
-  		
-  Connection conn = JDBCUtils.getConnection();
-  		
-  String sql = "insert into goods(name)values(?)";
-  PreparedStatement ps = conn.prepareStatement(sql);
-  for(int i = 1;i <= 20000;i++){
-  	ps.setString(1, "name_" + i);
-  	ps.executeUpdate();
-  }
-  		
-  long end = System.currentTimeMillis();
-  System.out.println("花费的时间为：" + (end - start));//82340
-  		
-  		
-  JDBCUtils.closeResource(conn, ps);
+long start = System.currentTimeMillis();
+
+Connection conn = JDBCUtils.getConnection();
+
+String sql = "insert into goods(name)values(?)";
+PreparedStatement ps = conn.prepareStatement(sql);
+for(int i = 1;i <= 20000;i++){
+  ps.setString(1, "name_" + i);
+  ps.executeUpdate();
+}
+
+long end = System.currentTimeMillis();
+System.out.println("花费的时间为：" + (end - start));//82340
+
+
+JDBCUtils.closeResource(conn, ps);
 ```
 
 -   方法三：
 
 
 ```java
-  /*
-   * 修改1： 使用 addBatch() / executeBatch() / clearBatch()
-   * 修改2：mysql服务器默认是关闭批处理的，我们需要通过一个参数，让mysql开启批处理的支持。
-   * 		 ?rewriteBatchedStatements=true 写在配置文件的url后面
-   * 修改3：使用更新的mysql 驱动：mysql-connector-java-5.1.37-bin.jar
-   * 
-   */
-  @Test
-  public void testInsert1() throws Exception{
-  	long start = System.currentTimeMillis();
-  		
-  	Connection conn = JDBCUtils.getConnection();
-  		
-  	String sql = "insert into goods(name)values(?)";
-  	PreparedStatement ps = conn.prepareStatement(sql);
-  		
-  	for(int i = 1;i <= 1000000;i++){
-  		ps.setString(1, "name_" + i);
-  			
-  		//1.“攒”sql
-  		ps.addBatch();
-  		if(i % 500 == 0){
-  			//2.执行
-  			ps.executeBatch();
-  			//3.清空
-  			ps.clearBatch();
-  		}
-  	}
-  		
-  	long end = System.currentTimeMillis();
-  	System.out.println("花费的时间为：" + (end - start));//20000条：625                                                                         //1000000条:14733  
-  		
-  	JDBCUtils.closeResource(conn, ps);
+/*
+ * 修改1： 使用 addBatch() / executeBatch() / clearBatch()
+ * 修改2：mysql服务器默认是关闭批处理的，我们需要通过一个参数，让mysql开启批处理的支持。
+ * 		 ?rewriteBatchedStatements=true 写在配置文件的url后面
+ * 修改3：使用更新的mysql 驱动：mysql-connector-java-5.1.37-bin.jar
+ * 
+ */
+@Test
+public void testInsert1() throws Exception{
+  long start = System.currentTimeMillis();
+
+  Connection conn = JDBCUtils.getConnection();
+
+  String sql = "insert into goods(name)values(?)";
+  PreparedStatement ps = conn.prepareStatement(sql);
+
+  for(int i = 1;i <= 1000000;i++){
+    ps.setString(1, "name_" + i);
+
+    //1.“攒”sql
+    ps.addBatch();
+    if(i % 500 == 0){
+      //2.执行
+      ps.executeBatch();
+      //3.清空
+      ps.clearBatch();
+    }
   }
+
+  long end = System.currentTimeMillis();
+  System.out.println("花费的时间为：" + (end - start));//20000条：625                                                                         //1000000条:14733  
+
+  JDBCUtils.closeResource(conn, ps);
+}
 ```
 
 - 方法四：
 
 ```java
-  /*
-  * 层次四：在层次三的基础上操作
-  * 使用Connection 的 setAutoCommit(false)  /  commit()
-  */
-  @Test
-  public void testInsert2() throws Exception{
-  	long start = System.currentTimeMillis();
-  		
-  	Connection conn = JDBCUtils.getConnection();
-  		
-  	//1.设置为不自动提交数据
-  	conn.setAutoCommit(false);
-  		
-  	String sql = "insert into goods(name)values(?)";
-  	PreparedStatement ps = conn.prepareStatement(sql);
-  		
-  	for(int i = 1;i <= 1000000;i++){
-  		ps.setString(1, "name_" + i);
-  			
-  		//1.“攒”sql
-  		ps.addBatch();
-  			
-  		if(i % 500 == 0){
-  			//2.执行
-  			ps.executeBatch();
-  			//3.清空
-  			ps.clearBatch();
-  		}
-  	}
-  		
-  	//2.提交数据
-  	conn.commit();
-  		
-  	long end = System.currentTimeMillis();
-  	System.out.println("花费的时间为：" + (end - start));//1000000条:4978 
-  		
-  	JDBCUtils.closeResource(conn, ps);
+/*
+ * 层次四：在层次三的基础上操作
+ * 使用Connection 的 setAutoCommit(false)  /  commit()
+ */
+@Test
+public void testInsert2() throws Exception{
+  long start = System.currentTimeMillis();
+
+  Connection conn = JDBCUtils.getConnection();
+
+  // 1.设置为不自动提交数据
+  conn.setAutoCommit(false);
+
+  String sql = "insert into goods(name)values(?)";
+  PreparedStatement ps = conn.prepareStatement(sql);
+
+  for(int i = 1;i <= 1000000;i++){
+    ps.setString(1, "name_" + i);
+
+    // 1.“攒”sql
+    ps.addBatch();
+
+    if(i % 500 == 0){
+      // 2.执行
+      ps.executeBatch();
+      // 3.清空
+      ps.clearBatch();
+    }
   }
+
+  // 2.提交数据
+  conn.commit();
+
+  long end = System.currentTimeMillis();
+  System.out.println("花费的时间为：" + (end - start));//1000000条:4978 
+
+  JDBCUtils.closeResource(conn, ps);
+}
 ```
 
   
@@ -822,13 +802,12 @@ for(int i = 1;i <= 20000;i++){
     ```mysql
     #授予通过网络方式登录的tom用户，对所有库所有表的全部权限，密码设为abc123.
     grant all privileges on *.* to tom@'%'  identified by 'abc123'; 
-      
+    
     #给tom用户使用本地命令行方式，授予atguigudb这个库下的所有表的插删改查的权限。
     rant select,insert,delete,update on atguigudb.* to tom@localhost identified by 'abc123'; 
-      
     ```
-
-      
+    
+  
 
 #### DAO及相关实现类
 
@@ -947,61 +926,61 @@ for(int i = 1;i <= 20000;i++){
 
 - 获取连接方式一
 ```java
-  //使用C3P0数据库连接池的方式，获取数据库的连接：不推荐
-  public static Connection getConnection1() throws Exception{
-  	ComboPooledDataSource cpds = new ComboPooledDataSource();
-  	cpds.setDriverClass("com.mysql.jdbc.Driver"); 
-  	cpds.setJdbcUrl("jdbc:mysql://localhost:3306/test");
-  	cpds.setUser("root");
-  	cpds.setPassword("abc123");
-  		
-  //	cpds.setMaxPoolSize(100);
-  	
-  	Connection conn = cpds.getConnection();
-  	return conn;
-  }
+// 使用C3P0数据库连接池的方式，获取数据库的连接：不推荐
+public static Connection getConnection1() throws Exception{
+  ComboPooledDataSource cpds = new ComboPooledDataSource();
+  cpds.setDriverClass("com.mysql.jdbc.Driver"); 
+  cpds.setJdbcUrl("jdbc:mysql://localhost:3306/test");
+  cpds.setUser("root");
+  cpds.setPassword("abc123");
+
+  // cpds.setMaxPoolSize(100);
+
+  Connection conn = cpds.getConnection();
+  return conn;
+}
 ```
 
 - 获取连接方式二
 
 ```java
-  //使用C3P0数据库连接池的配置文件方式，获取数据库的连接：推荐
-  private static DataSource cpds = new ComboPooledDataSource("helloc3p0");
-  public static Connection getConnection2() throws SQLException{
-  	Connection conn = cpds.getConnection();
-  	return conn;
-  }
+// 使用C3P0数据库连接池的配置文件方式，获取数据库的连接：推荐
+private static DataSource cpds = new ComboPooledDataSource("helloc3p0");
+public static Connection getConnection2() throws SQLException{
+  Connection conn = cpds.getConnection();
+  return conn;
+}
 ```
 
 - 配置文件为：c3p0-config.xml
 
 
 ```xml
-  <?xml version="1.0" encoding="UTF-8"?>
-  <c3p0-config>
-  	<named-config name="helloc3p0">
-  		<!-- 获取连接的4个基本信息 -->
-  		<property name="user">root</property>
-  		<property name="password">abc123</property>
-  		<property name="jdbcUrl">jdbc:mysql:///test</property>
-  		<property name="driverClass">com.mysql.jdbc.Driver</property>
-  		
-  		<!-- 涉及到数据库连接池的管理的相关属性的设置 -->
-  		<!-- 若数据库中连接数不足时, 一次向数据库服务器申请多少个连接 -->
-  		<property name="acquireIncrement">5</property>
-  		<!-- 初始化数据库连接池时连接的数量 -->
-  		<property name="initialPoolSize">5</property>
-  		<!-- 数据库连接池中的最小的数据库连接数 -->
-  		<property name="minPoolSize">5</property>
-  		<!-- 数据库连接池中的最大的数据库连接数 -->
-  		<property name="maxPoolSize">10</property>
-  		<!-- C3P0 数据库连接池可以维护的 Statement 的个数 -->
-  		<property name="maxStatements">20</property>
-  		<!-- 每个连接同时可以使用的 Statement 对象的个数 -->
-  		<property name="maxStatementsPerConnection">5</property>
-  
-  	</named-config>
-  </c3p0-config>
+<?xml version="1.0" encoding="UTF-8"?>
+<c3p0-config>
+  <named-config name="helloc3p0">
+    <!-- 获取连接的4个基本信息 -->
+    <property name="user">root</property>
+    <property name="password">abc123</property>
+    <property name="jdbcUrl">jdbc:mysql:///test</property>
+    <property name="driverClass">com.mysql.jdbc.Driver</property>
+
+    <!-- 涉及到数据库连接池的管理的相关属性的设置 -->
+    <!-- 若数据库中连接数不足时, 一次向数据库服务器申请多少个连接 -->
+    <property name="acquireIncrement">5</property>
+    <!-- 初始化数据库连接池时连接的数量 -->
+    <property name="initialPoolSize">5</property>
+    <!-- 数据库连接池中的最小的数据库连接数 -->
+    <property name="minPoolSize">5</property>
+    <!-- 数据库连接池中的最大的数据库连接数 -->
+    <property name="maxPoolSize">10</property>
+    <!-- C3P0 数据库连接池可以维护的 Statement 的个数 -->
+    <property name="maxStatements">20</property>
+    <!-- 每个连接同时可以使用的 Statement 对象的个数 -->
+    <property name="maxStatementsPerConnection">5</property>
+
+  </named-config>
+</c3p0-config>
 ```
 
 
@@ -1033,45 +1012,44 @@ for(int i = 1;i <= 20000;i++){
 
 ```java
 public static Connection getConnection3() throws Exception {
-	BasicDataSource source = new BasicDataSource();
-		
-	source.setDriverClassName("com.mysql.jdbc.Driver");
-	source.setUrl("jdbc:mysql:///test");
-	source.setUsername("root");
-	source.setPassword("abc123");
-		
-	//
-	source.setInitialSize(10);
-		
-	Connection conn = source.getConnection();
-	return conn;
+  BasicDataSource source = new BasicDataSource();
+
+  source.setDriverClassName("com.mysql.jdbc.Driver");
+  source.setUrl("jdbc:mysql:///test");
+  source.setUsername("root");
+  source.setPassword("abc123");
+
+  source.setInitialSize(10);
+
+  Connection conn = source.getConnection();
+  return conn;
 }
 ```
 
 - 获取连接方式二：
 
 ```java
-//使用dbcp数据库连接池的配置文件方式，获取数据库的连接：推荐
+// 使用dbcp数据库连接池的配置文件方式，获取数据库的连接：推荐
 private static DataSource source = null;
 static{
-	try {
-		Properties pros = new Properties();
-		
-		InputStream is = DBCPTest.class.getClassLoader().getResourceAsStream("dbcp.properties");
-			
-		pros.load(is);
-		//根据提供的BasicDataSourceFactory创建对应的DataSource对象
-		source = BasicDataSourceFactory.createDataSource(pros);
-	} catch (Exception e) {
-		e.printStackTrace();
-	}
-		
+  try {
+    Properties pros = new Properties();
+
+    InputStream is = DBCPTest.class.getClassLoader().getResourceAsStream("dbcp.properties");
+
+    pros.load(is);
+    // 根据提供的BasicDataSourceFactory创建对应的DataSource对象
+    source = BasicDataSourceFactory.createDataSource(pros);
+  } catch (Exception e) {
+    e.printStackTrace();
+  }
+
 }
 public static Connection getConnection4() throws Exception {
-		
-	Connection conn = source.getConnection();
-	
-	return conn;
+
+  Connection conn = source.getConnection();
+
+  return conn;
 }
 ```
 
@@ -1107,12 +1085,12 @@ import javax.sql.DataSource;
 import com.alibaba.druid.pool.DruidDataSourceFactory;
 
 public class TestDruid {
-	public static void main(String[] args) throws Exception {
-		Properties pro = new Properties();		 pro.load(TestDruid.class.getClassLoader().getResourceAsStream("druid.properties"));
-		DataSource ds = DruidDataSourceFactory.createDataSource(pro);
-		Connection conn = ds.getConnection();
-		System.out.println(conn);
-	}
+  public static void main(String[] args) throws Exception {
+    Properties pro = new Properties();		 pro.load(TestDruid.class.getClassLoader().getResourceAsStream("druid.properties"));
+    DataSource ds = DruidDataSourceFactory.createDataSource(pro);
+    Connection conn = ds.getConnection();
+    System.out.println(conn);
+  }
 }
 
 ```
@@ -1231,41 +1209,41 @@ filters=wall
 
 ```java
 总结
-@Test
-public void testUpdateWithTx() {
-		
-	Connection conn = null;
-	try {
-		//1.获取连接的操作（
-		//① 手写的连接：JDBCUtils.getConnection();
-		//② 使用数据库连接池：C3P0;DBCP;Druid
-		//2.对数据表进行一系列CRUD操作
-		//① 使用PreparedStatement实现通用的增删改、查询操作（version 1.0 \ version 2.0)
-//version2.0的增删改public void update(Connection conn,String sql,Object ... args){}
-//version2.0的查询 public <T> T getInstance(Connection conn,Class<T> clazz,String sql,Object ... args){}
-		//② 使用dbutils提供的jar包中提供的QueryRunner类
-			
-		//提交数据
-		conn.commit();
-			
-	
-	} catch (Exception e) {
-		e.printStackTrace();
-			
-			
-		try {
-			//回滚数据
-			conn.rollback();
-		} catch (SQLException e1) {
-			e1.printStackTrace();
-		}
-			
-	}finally{
-		//3.关闭连接等操作
-		//① JDBCUtils.closeResource();
-		//② 使用dbutils提供的jar包中提供的DbUtils类提供了关闭的相关操作
-			
-	}
+  @Test
+  public void testUpdateWithTx() {
+
+  Connection conn = null;
+  try {
+    // 1.获取连接的操作（
+    // ① 手写的连接：JDBCUtils.getConnection();
+    // ② 使用数据库连接池：C3P0;DBCP;Druid
+    // 2.对数据表进行一系列CRUD操作
+    // ① 使用PreparedStatement实现通用的增删改、查询操作（version 1.0 \ version 2.0)
+    // version2.0的增删改public void update(Connection conn,String sql,Object ... args){}
+    // version2.0的查询 public <T> T getInstance(Connection conn,Class<T> clazz,String sql,Object ... args){}
+    // ② 使用dbutils提供的jar包中提供的QueryRunner类
+
+    // 提交数据
+    conn.commit();
+
+
+  } catch (Exception e) {
+    e.printStackTrace();
+
+
+    try {
+      // 回滚数据
+      conn.rollback();
+    } catch (SQLException e1) {
+      e1.printStackTrace();
+    }
+
+  }finally{
+    // 3.关闭连接等操作
+    // ① JDBCUtils.closeResource();
+    // ② 使用dbutils提供的jar包中提供的DbUtils类提供了关闭的相关操作
+  }
+  
 }
 ```
 

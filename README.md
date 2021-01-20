@@ -38,7 +38,6 @@
 - JavaScript
 - JQuery
 - Servelet
-- Filter
 - JSON
 - Ajax
 - RESTful
@@ -49,6 +48,9 @@
 - SEO
 - XSS
 - CSRF
+- Cookie、Session
+- 过滤器
+- 监听器
 
 #### MySQL
 
@@ -80,6 +82,8 @@
 - Jmeter
 - UML类图
 - Linux
+- Curl
+- CRON表达式
 
 #### 中间件
 
@@ -89,6 +93,7 @@
 - Zookeeper
 - ElasticSearch
 - Sentinel
+- Nginx
 
 #### Others
 
@@ -102,6 +107,7 @@
 - 单例模式
 - 工厂模式
 - 模版模式
+- 责任链模式
 
 #### JVM
 

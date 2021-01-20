@@ -16,10 +16,10 @@
 CREATE DATABASE `SEQID`;
 
 CREATE TABLE SEQID.SEQUENCE_ID (
-	id bigint(20) unsigned NOT NULL auto_increment, 
-	str char(10) NOT NULL default '',
-	PRIMARY KEY (id),
-	UNIQUE KEY str (str)
+  id bigint(20) unsigned NOT NULL auto_increment, 
+  str char(10) NOT NULL default '',
+  PRIMARY KEY (id),
+  UNIQUE KEY str (str)
 ) ENGINE=MyISAM;
 ```
 
