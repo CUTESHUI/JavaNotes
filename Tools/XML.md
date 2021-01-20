@@ -18,7 +18,7 @@
 <?xml version="1.0" encoding="UTF-8"?> 
 <!-- xml 声明 version 是版本的意思 encoding 是编码 --> 
 <books> <!-- 这是 xml 注释 -->
-	<book id="SN123123413241"> <!-- book 标签描述一本图书 id 属性描述 的是图书 的编号 --> 
+  <book id="SN123123413241"> <!-- book 标签描述一本图书 id 属性描述 的是图书 的编号 --> 
     <name>java 编程思想</name> <!-- name 标签描述 的是图书 的信息 --> 
     <author>华仔</author> <!-- author 单词是作者的意思 ，描述图书作者 --> 
     <price>9.9</price> <!-- price 单词是价格，描述的是图书 的价格 --> 

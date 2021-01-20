@@ -56,28 +56,28 @@
 ```java
 @Service
 public class UserService implements UserDetailsService {
-    private List<User> userList;
-    @Autowired
-    private PasswordEncoder passwordEncoder;
+  private List<User> userList;
+  @Autowired
+  private PasswordEncoder passwordEncoder;
 
-    @PostConstruct
-    public void initData() {
-        String password = passwordEncoder.encode("123456");
-        userList = new ArrayList<>();
-        userList.add(new User("tom", password, AuthorityUtils.commaSeparatedStringToAuthorityList("admin")));
-        userList.add(new User("blue", password, AuthorityUtils.commaSeparatedStringToAuthorityList("client")));
-        userList.add(new User("red", password, AuthorityUtils.commaSeparatedStringToAuthorityList("client")));
-    }
+  @PostConstruct
+  public void initData() {
+    String password = passwordEncoder.encode("123456");
+    userList = new ArrayList<>();
+    userList.add(new User("tom", password, AuthorityUtils.commaSeparatedStringToAuthorityList("admin")));
+    userList.add(new User("blue", password, AuthorityUtils.commaSeparatedStringToAuthorityList("client")));
+    userList.add(new User("red", password, AuthorityUtils.commaSeparatedStringToAuthorityList("client")));
+  }
 
-    @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        List<User> findUserList = userList.stream().filter(user -> user.getUsername().equals(username)).collect(Collectors.toList());
-        if (!CollectionUtils.isEmpty(findUserList)) {
-            return findUserList.get(0);
-        } else {
-            throw new UsernameNotFoundException("用户名或密码错误");
-        }
+  @Override
+  public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+    List<User> findUserList = userList.stream().filter(user -> user.getUsername().equals(username)).collect(Collectors.toList());
+    if (!CollectionUtils.isEmpty(findUserList)) {
+      return findUserList.get(0);
+    } else {
+      throw new UsernameNotFoundException("用户名或密码错误");
     }
+  }
 }
 ```
 
@@ -88,35 +88,35 @@ public class UserService implements UserDetailsService {
 @EnableAuthorizationServer
 public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdapter {
 
-    @Autowired
-    private PasswordEncoder passwordEncoder;
+  @Autowired
+  private PasswordEncoder passwordEncoder;
 
-    @Autowired
-    private AuthenticationManager authenticationManager;
+  @Autowired
+  private AuthenticationManager authenticationManager;
 
-    @Autowired
-    private UserService userService;
+  @Autowired
+  private UserService userService;
 
-    /**
-     * 使用密码模式需要配置
-     */
-    @Override
-    public void configure(AuthorizationServerEndpointsConfigurer endpoints) {
-        endpoints.authenticationManager(authenticationManager)
-                .userDetailsService(userService);
-    }
+  /**
+   * 使用密码模式需要配置
+   */
+  @Override
+  public void configure(AuthorizationServerEndpointsConfigurer endpoints) {
+    endpoints.authenticationManager(authenticationManager)
+      .userDetailsService(userService);
+  }
 
-    @Override
-    public void configure(ClientDetailsServiceConfigurer clients) throws Exception {
-        clients.inMemory()
-                .withClient("admin")	//配置client_id
-                .secret(passwordEncoder.encode("admin123456"))	//配置client_secret
-                .accessTokenValiditySeconds(3600)			//配置访问token的有效期
-                .refreshTokenValiditySeconds(864000)	//配置刷新token的有效期
-                .redirectUris("http://www.baidu.com")	//配置redirect_uri，用于授权成功后跳转
-                .scopes("all")	//配置申请的权限范围
-                .authorizedGrantTypes("authorization_code","password");	//配置grant_type，表示授权类型
-    }
+  @Override
+  public void configure(ClientDetailsServiceConfigurer clients) throws Exception {
+    clients.inMemory()
+      .withClient("admin")	//配置client_id
+      .secret(passwordEncoder.encode("admin123456"))	//配置client_secret
+      .accessTokenValiditySeconds(3600)			//配置访问token的有效期
+      .refreshTokenValiditySeconds(864000)	//配置刷新token的有效期
+      .redirectUris("http://www.baidu.com")	//配置redirect_uri，用于授权成功后跳转
+      .scopes("all")	//配置申请的权限范围
+      .authorizedGrantTypes("authorization_code","password");	//配置grant_type，表示授权类型
+  }
 }
 ```
 
@@ -127,15 +127,15 @@ public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdap
 @EnableResourceServer
 public class ResourceServerConfig extends ResourceServerConfigurerAdapter {
 
-    @Override
-    public void configure(HttpSecurity http) throws Exception {
-        http.authorizeRequests()
-                .anyRequest()
-                .authenticated()
-                .and()
-                .requestMatchers()
-                .antMatchers("/user/**");	//配置需要保护的资源路径
-    }
+  @Override
+  public void configure(HttpSecurity http) throws Exception {
+    http.authorizeRequests()
+      .anyRequest()
+      .authenticated()
+      .and()
+      .requestMatchers()
+      .antMatchers("/user/**");	//配置需要保护的资源路径
+  }
 }
 ```
 
@@ -146,30 +146,30 @@ public class ResourceServerConfig extends ResourceServerConfigurerAdapter {
 @EnableWebSecurity
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
-    @Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
-    }
+  @Bean
+  public PasswordEncoder passwordEncoder() {
+    return new BCryptPasswordEncoder();
+  }
 
-    @Bean
-    @Override
-    public AuthenticationManager authenticationManagerBean() throws Exception {
-        return super.authenticationManagerBean();
-    }
+  @Bean
+  @Override
+  public AuthenticationManager authenticationManagerBean() throws Exception {
+    return super.authenticationManagerBean();
+  }
 
-    @Override
-    public void configure(HttpSecurity http) throws Exception {
-        http.csrf()
-                .disable()
-                .authorizeRequests()
-                .antMatchers("/oauth/**", "/login/**", "/logout/**")
-                .permitAll()
-                .anyRequest()
-                .authenticated()
-                .and()
-                .formLogin()
-                .permitAll();
-    }
+  @Override
+  public void configure(HttpSecurity http) throws Exception {
+    http.csrf()
+      .disable()
+      .authorizeRequests()
+      .antMatchers("/oauth/**", "/login/**", "/logout/**")
+      .permitAll()
+      .anyRequest()
+      .authenticated()
+      .and()
+      .formLogin()
+      .permitAll();
+  }
 }
 ```
 
@@ -182,13 +182,13 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 @Configuration
 public class RedisTokenStoreConfig {
 
-    @Autowired
-    private RedisConnectionFactory redisConnectionFactory;
+  @Autowired
+  private RedisConnectionFactory redisConnectionFactory;
 
-    @Bean
-    public TokenStore redisTokenStore (){
-        return new RedisTokenStore(redisConnectionFactory);
-    }
+  @Bean
+  public TokenStore redisTokenStore (){
+    return new RedisTokenStore(redisConnectionFactory);
+  }
 }
 ```
 
@@ -197,30 +197,30 @@ public class RedisTokenStoreConfig {
 @EnableAuthorizationServer
 public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdapter {
 
-    @Autowired
-    private PasswordEncoder passwordEncoder;
+  @Autowired
+  private PasswordEncoder passwordEncoder;
 
-    @Autowired
-    private AuthenticationManager authenticationManager;
+  @Autowired
+  private AuthenticationManager authenticationManager;
 
-    @Autowired
-    private UserService userService;
+  @Autowired
+  private UserService userService;
 
-    @Autowired
-    @Qualifier("redisTokenStore")
-    private TokenStore tokenStore;
+  @Autowired
+  @Qualifier("redisTokenStore")
+  private TokenStore tokenStore;
 
-    /**
-     * 使用密码模式需要配置
-     */
-    @Override
-    public void configure(AuthorizationServerEndpointsConfigurer endpoints) {
-        endpoints.authenticationManager(authenticationManager)
-                .userDetailsService(userService)
-                .tokenStore(tokenStore);	//配置令牌存储策略
-    }
+  /**
+   * 使用密码模式需要配置
+   */
+  @Override
+  public void configure(AuthorizationServerEndpointsConfigurer endpoints) {
+    endpoints.authenticationManager(authenticationManager)
+      .userDetailsService(userService)
+      .tokenStore(tokenStore);	//配置令牌存储策略
+  }
 
-    // ...
+  // ...
 }
 ```
 
