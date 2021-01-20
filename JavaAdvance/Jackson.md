@@ -74,29 +74,29 @@ class Writer{
 
 ```java
 public class Demo {
-    public static void main(String[] args) throws JsonProcessingException {
-        ObjectMapper mapper = new ObjectMapper();
-        String jsonString = "{\n" +
-                "  \"name\" : \"tom\",\n" +
-                "  \"age\" : 18\n" +
-                "}";
-        Writer deserializedWriter = mapper.readValue(jsonString, Writer.class);
-        System.out.println(deserializedWriter);
-    }
+  public static void main(String[] args) throws JsonProcessingException {
+    ObjectMapper mapper = new ObjectMapper();
+    String jsonString = "{\n" +
+      "  \"name\" : \"tom\",\n" +
+      "  \"age\" : 18\n" +
+      "}";
+    Writer deserializedWriter = mapper.readValue(jsonString, Writer.class);
+    System.out.println(deserializedWriter);
+  }
 }
 
 @Data
 class Writer{
-    private String name;
-    private int age;
+  private String name;
+  private int age;
 
-    @Override
-    public String toString() {
-        return "Writer{" +
-                "name='" + name + '\'' +
-                ", age=" + age +
-                '}';
-    }
+  @Override
+  public String toString() {
+    return "Writer{" +
+      "name='" + name + '\'' +
+      ", age=" + age +
+      '}';
+  }
 }
 ```
 
@@ -127,11 +127,11 @@ Writer{name='tom', age=18}
   // GMT+8 是指格林尼治的标准时间，在加上八个小时表示你现在所在时区的时间
   @JsonFormat(timezone = "GMT+8", pattern = "yyyy-MM-dd HH:mm:ss")
   public Date getBirthday() {
-      return birthday;
+    return birthday;
   }
   
   public void setBirthday(Date birthday) {
-      this.birthday = birthday;
+    this.birthday = birthday;
   }
   ```
 
@@ -149,12 +149,11 @@ Writer{name='tom', age=18}
   mapper.setDateFormat(StdDateFormat.getDateTimeInstance());
   Writer wanger = new Writer("tom", 18);
   wanger.setBirthday(new Date());
-  String jsonString = mapper.writerWithDefaultPrettyPrinter()
-                  .writeValueAsString(wanger);
+  String jsonString = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(wanger);
   System.out.println(jsonString);
   ```
-
-  ```java
+  
+```java
   {
     "name" : "tom",
     "age" : 18,
@@ -172,7 +171,7 @@ Writer{name='tom', age=18}
 ```java
 @JsonIgnore
 public String getName() {
-    return name;
+  return name;
 }
 ```
 
@@ -181,9 +180,9 @@ public String getName() {
 ```java
 @JsonIgnoreProperties(value = { "age","birthday" })
 class Writer{
-    private String name;
-    private int age;
-    private Date birthday;
+  private String name;
+  private int age;
+  private Date birthday;
 }
 ```
 
@@ -198,26 +197,26 @@ class Writer{
 
 ```java
 public class CustomSerializer extends StdSerializer<Man> {
-    protected CustomSerializer(Class<Man> t) {
-        super(t);
-    }
+  protected CustomSerializer(Class<Man> t) {
+    super(t);
+  }
 
-    public CustomSerializer() {
-        this(null);
-    }
+  public CustomSerializer() {
+    this(null);
+  }
 
-    @Override
-    public void serialize(Man value, JsonGenerator gen, SerializerProvider provider) throws IOException {
-        gen.writeStartObject();
-        gen.writeStringField("name", value.getName()); //自定义序列化中只添加了 name，age也就无法序列化，无法展示
-        gen.writeEndObject();
-    }
+  @Override
+  public void serialize(Man value, JsonGenerator gen, SerializerProvider provider) throws IOException {
+    gen.writeStartObject();
+    gen.writeStringField("name", value.getName()); //自定义序列化中只添加了 name，age也就无法序列化，无法展示
+    gen.writeEndObject();
+  }
 }
 
 @Data
 class Man{
-    private int age;
-    private String name;
+  private int age;
+  private String name;
 }
 ```
 
@@ -232,7 +231,7 @@ System.out.println(json);
 ```
 
 ```java
-{"name":"沉默王二"}
+{"name":"tom"}
 ```
 
 

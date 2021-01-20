@@ -9,14 +9,6 @@
 
 
 
-在 JavaScript 语言中，一切都是对象。因此，任何 JavaScript 支持的类型都可以通过 JSON 来表示，例如字符串、数字、对象、数组等。看看他的要求和语法格式：
-
-- 对象表示为键值对，数据由逗号分隔
-- 花括号保存对象
-- 方括号保存数组
-
-
-
 #### JSON 键值对
 
 - 用来保存 JavaScript 对象的一种方式
@@ -59,7 +51,6 @@ var json = JSON.stringify({a: 'Hello', b: 'World'});
 #### FastJSON
 
 - fastjson.jar 是阿里开发的一款专门用于 Java开发的包，可以方便的实现 json 对象与 JavaBean对象的相互转换
-- 实现 json 的转换方法很多，最后的实现结果都是一样的
 - POM依赖
 
 ```xml
@@ -80,3 +71,25 @@ var json = JSON.stringify({a: 'Hello', b: 'World'});
     - 内部是有 List 接口中的方法来完成操作
   - JSON 代表 JSONObject 和 JSONArray 的转化
     - 仔细观察这些方法，主要是实现 json对象、json对象数组、javabean对象、json字符串之间的相互转化
+- JSONObject
+  - JavaBean  -> JSONString 
+    - JSONObject.toJSONString(JavaBean)
+  - JSONString -> JavaBean
+    - JSONObject.parseObject(JSONString, JavaBean.clss)
+  - JSONString -> JavaBean
+    - JSONObject.toJavaObject(JSONString, JavaBean.clss)
+  - JSONString -> JSONObject
+    - JSONObject.parseObject(JSONString)
+  - JSONObject -> Map
+    - Map<String,Object> map = (Map<String, Object>) jsonObject;
+- JSON
+  - JavaBean -> JSONString 
+    - JSON.toJSONString(JavaBean)
+  - JSONString -> JavaBean
+    - JSON.parseObject(JSONString, JavaBean.clss)
+  - JSONString -> JavaBeanList
+    - JSON.parseArray(JSONString, JavaBean.clss)
+  - JavaBeanList -> JSONString
+    - JSON.toJSONString(JavaBeanList)
+  - Map -> JSONString
+    - JSON.toJSONString(Map)
