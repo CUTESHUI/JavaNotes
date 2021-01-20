@@ -91,19 +91,19 @@
     <meta charset="UTF-8"> 
     <title>Title</title> 
     <script type="text/javascript">
-      
+
       var i; 
       // alert(i); // undefined i = 12; 
       // typeof()是 JavaScript 语言提供的一个函数。 
       // alert( typeof(i) ); 
       // number
-      
+
       i = "abc"; 
       // 它可以取变量的数据类型返回 
       // alert( typeof(i) ); 
       // String var a = 12; var b = "abc"; alert( a * b ); 
       // NaN 是非数字，非数值。
-      
+
     </script> 
   </head> 
   <body> 

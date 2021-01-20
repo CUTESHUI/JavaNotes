@@ -141,18 +141,18 @@ String wuhan2020;
 @Component
 @ConfigurationProperties(prefix = "library")
 class LibraryProperties {
-    @NotEmpty
-    private String location;
-    private List<Book> books;
+  @NotEmpty
+  private String location;
+  private List<Book> books;
 
-    @Setter
-    @Getter
-    @ToString
-    static class Book {
-        String name;
-        String description;
-    }
-  	......
+  @Setter
+  @Getter
+  @ToString
+  static class Book {
+    String name;
+    String description;
+  }
+  ......
 }
 ```
 
