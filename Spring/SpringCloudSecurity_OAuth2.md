@@ -15,7 +15,7 @@
 - Authorization server：认证服务器，用来进行用户认证并颁发token
 - Resource server：资源服务器，拥有被访问资源的服务器，需要通过token来确定是否有权限访问
 
-
+➜
 
 #### 四种授权模式
 
