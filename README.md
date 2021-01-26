@@ -48,7 +48,7 @@
 - SEO
 - XSS
 - CSRF
-- Cookie、Session
+- Session
 - 过滤器
 - 监听器
 

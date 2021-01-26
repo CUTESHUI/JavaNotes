@@ -94,3 +94,28 @@ httpSession.setAttribute("name","看完博客就要点赞！！");
   - 当访问 Servlet 的时候，服务器就会创建一个 Session 对象，执行程序代码，并自动颁发个 Cookie 给用户浏览器
   - 该 Cookie 是服务器自动颁发给浏览器的
   - 该 Cookie 的 maxAge 值默认是-1，也就是说仅当前浏览器使用，不把该 Cookie 存在硬盘中
+
+
+
+#### Session、Cookie区别
+
+- 存储方式
+
+  - Cookie 只能存储字符串，如果要存储非ASCII字符串还要编码
+  - Session 可以存储任何类型的数据，可以把 Session 看成一个容器
+
+- 隐私安全
+  - Cookie 存储在浏览器中，对客户端是可见的，信息容易泄露出去，如果使用 Cookie，最好对 Cookie 加密
+    - Session 存储在服务器上，对客户端是透明的，不存在敏感信息泄露问题
+- 对服务器的负担
+  - Session 是保存在服务器的 ( 内存中 )，每个用户都会产生一个 Session，如果是并发访问的用户非常多，是不能使用 Session 的，Session 会消耗大量的内存
+    - Cookie 是保存在浏览器的，不占用服务器的资源。像baidu、Sina这样的大型网站，一般都是使用 Cookie 来进行会话跟踪
+- 有效期
+  - Cookie 保存在浏览器中，只要设置 maxAge 属性是比较大的正整数，即使关闭浏览器，Cookie 还是存在
+    - Session 保存在服务器中，设置 maxInactiveInterval 属性值来确定 Session 有效期，并且 Session 依赖于名为 JSESSIONID 的 Cookie，该 Cookie 默认的 maxAge 属性为 -1。如果关闭了浏览器，该 Session 虽然没有从服务器中消亡，但失效了
+- 浏览器的支持
+  - 如果浏览器禁用了 Cookie，那么 Cookie 是无用的
+    - 如果浏览器禁用了 Cookie，Session 可以通过 URL 地址重写来进行会话跟踪
+- 跨域名
+  - Cookie 可以设置 domain 属性来实现跨域名
+    - Session 只在当前的域名内有效，不可夸域名
