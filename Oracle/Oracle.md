@@ -410,25 +410,24 @@ CREATE SEQUENCE sequence_name
       next 1M
       minextents 1
       maxextents unlimited
-   
   )];
   ```
-
-  - 分析
+  
+- 分析
     - UNIQUE：指定索引列上的值必须是唯一的，称为唯一索引
     - BITMAP：位图索引
     - index_name：指定索引名
     - tabl_name：指定要为哪个表创建索引
     - column_name：指定要对哪个列创建索引。我们也可以对多列创建索引，这种索引称为组合索引，也可以是函数表达式，这就是函数索引
-
+  
 - 修改
 
   - 重命名索引
   - 合并索引、重新构造索引
 
   ```
-  alter index index_name coalesce;--合并索引
-  alter index index_name rebuild;--重新构造
+  alter index index_name coalesce; --合并索引
+  alter index index_name rebuild;  --重新构造
   ```
 
 - 删除
@@ -441,12 +440,12 @@ CREATE SEQUENCE sequence_name
 
   ```
   select t.INDEX_NAME,--索引名字
-         t.index_type,--索引类型
-         t.TABLESPACE_NAME,--表空间
-         t.status,--状态
-         t.UNIQUENESS--是否唯一索引
-    from all_indexes T 
-    where  t.INDEX_NAME='index_name';
+  	t.index_type,--索引类型
+    t.TABLESPACE_NAME,--表空间
+    t.status,--状态
+    t.UNIQUENESS--是否唯一索引
+  from all_indexes T 
+  where  t.INDEX_NAME='index_name';
   ```
 
 ---
@@ -551,18 +550,3 @@ rename column ename to username;
 将emp表重命名emps，rename 原表名 to 新表名
 rename emp to emps;
 ```
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

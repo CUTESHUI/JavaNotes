@@ -89,12 +89,12 @@ SHOW VARIABLES -- 显示系统变量信息
     -- 修改表的字段机构（13.1.2. ALTER TABLE语法）
         ALTER TABLE 表名 操作名
         -- 操作名
-            ADD[ COLUMN] 字段定义       -- 增加字段
+            ADD[ COLUMN] 字段定义     -- 增加字段
                 AFTER 字段名          -- 表示增加在该字段名后面
-                FIRST               -- 表示增加在第一个
+                FIRST                -- 表示增加在第一个
             ADD PRIMARY KEY(字段名)   -- 创建主键
-            ADD UNIQUE [索引名] (字段名)-- 创建唯一索引
-            ADD INDEX [索引名] (字段名) -- 创建普通索引
+            ADD UNIQUE [索引名] (字段名) -- 创建唯一索引
+            ADD INDEX [索引名] (字段名)  -- 创建普通索引
             DROP[ COLUMN] 字段名      -- 删除字段
             MODIFY[ COLUMN] 字段名 字段属性     -- 支持对字段属性进行修改，不能修改字段名(所有原有属性也需写上)
             CHANGE[ COLUMN] 原字段名 新字段名 字段属性      -- 支持对字段名修改
@@ -128,7 +128,7 @@ SHOW VARIABLES -- 显示系统变量信息
         -- 如果要插入的值列表包含所有字段并且顺序一致，则可以省略字段列表。
         -- 可同时插入多条数据记录！
         REPLACE 与 INSERT 完全一样，可互换。
-    INSERT [INTO] 表名 SET 字段名=值[, 字段名=值, ...]
+    INSERT [INTO] 表名 SET 字段名=值[字段名=值, ...]
 -- 查
     SELECT 字段列表 FROM 表名[ 其他子句]
         -- 可来自多个表的多个字段
@@ -138,7 +138,7 @@ SHOW VARIABLES -- 显示系统变量信息
     DELETE FROM 表名[ 删除条件子句]
         没有条件子句，则会删除全部
 -- 改
-    UPDATE 表名 SET 字段名=新值[, 字段名=新值] [更新条件]
+    UPDATE 表名 SET 字段名=新值[字段名=新值, ...] [更新条件]
 ```
 
 #### 字符集编码
@@ -183,7 +183,7 @@ SET NAMES GBK;  -- 相当于完成以上三个设置
     - 在满足要求的情况下，越小越好。
     - 1表示bool值真，0表示bool值假。MySQL没有布尔类型，通过整型0和1表示。常用tinyint(1)表示布尔型。
 -- b. 浮点型 ----------
-    类型             字节     范围
+    类型              字节     范围
     float(单精度)     4字节
     double(双精度)    8字节
     浮点型既支持符号位 unsigned 属性，也支持显示宽度 zerofill 属性。
@@ -445,10 +445,10 @@ h. DISTINCT, ALL 选项
         行构造符：(col1, col2, ...) 或 ROW(col1, col2, ...)
         行构造符通常用于与对能返回两个或两个以上列的子查询进行比较。
     -- 特殊运算符
-    != all()    相当于 not in
-    = some()    相当于 in。any 是 some 的别名
-    != some()   不等同于 not in，不等于其中某一个。
-    all, some 可以配合其他运算符一起使用。
+        != all()    相当于 not in
+        = some()    相当于 in。any 是 some 的别名
+        != some()   不等同于 not in，不等于其中某一个。
+        all, some 可以配合其他运算符一起使用。
 ```
 
 ### 连接查询(join)
@@ -680,6 +680,8 @@ end
 -- 赋值
     使用 set 和 select into 语句为变量赋值。
     - 注意：在函数内是可以使用全局变量（用户自定义的变量）
+
+
 --// 全局变量 ----------
 -- 定义、赋值
 set 语句可以定义并为变量赋值。
@@ -695,6 +697,8 @@ select into 可以将表中查询获得的数据赋给变量。
 为了避免select语句中，用户自定义的变量与系统标识符（通常是字段名）冲突，用户自定义变量在变量名前使用@作为开始符号。
 @var=10;
     - 变量被定义后，在整个会话周期都有效（登录到退出）
+
+
 --// 控制结构 ----------
 -- if语句
 if search_condition then
@@ -719,6 +723,8 @@ end while [end_label];
         退出整个循环 leave
         退出当前循环 iterate
         通过退出的标签决定退出哪个循环
+
+
 --// 内置函数 ----------
 -- 数值函数
 abs(x)          -- 绝对值 abs(-10.9) = 10
@@ -772,6 +778,8 @@ group_concat()
 -- 其他常用函数
 md5();
 default();
+
+
 --// 存储函数，自定义函数 ----------
 -- 新建
     CREATE FUNCTION function_name (参数列表) RETURNS 返回值类型
@@ -789,6 +797,8 @@ default();
     SHOW CREATE FUNCTION function_name;
 -- 修改
     ALTER FUNCTION function_name 函数选项
+
+
 --// 存储过程，自定义功能 ----------
 -- 定义
 存储存储过程 是一段代码（过程），存储在数据库中的sql组成。
@@ -910,7 +920,7 @@ GRANT OPTION    -- 允许授予权限
 #### 表维护
 
 ```
-/* 表维护 */
+/* 表维护 */ ------------------
 -- 分析和存储表的关键字分布
 ANALYZE [LOCAL | NO_WRITE_TO_BINLOG] TABLE 表名 ...
 -- 检查一个或多个表是否有错误
