@@ -49,6 +49,7 @@
 - XSS
 - CSRF
 - Session
+- Cookie
 - 过滤器
 - 监听器
 

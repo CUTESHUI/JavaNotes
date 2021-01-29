@@ -1,12 +1,15 @@
 ## Servlet
 
+#### 简介
+
+- ⼀个遵循 Servlet 开发的 java 类
+- Servlet 由服务器调⽤的，运⾏在服务器端
 
 
 
+#### Servlet生命周期
 
-#### 生命周期
-
-- 加载Servlet
+- 加载 Servlet
   - 当 Tomcat 第一次访问 Servlet 的时候，Tomcat 会负责创建 Servlet 的实例
 - 初始化
   - 当 Servlet 被实例化后，Tomcat会调用 init() 方法初始化这个对象
@@ -18,9 +21,9 @@
   - 当 Servlet 调用完 destroy() 方法后，等待垃圾回收。如果有需要再次使用这个 Servlet，会重新调用 init() 方法进行初始化操作
 
 - 总结
-  - 只要访问 Servlet，service() 就会被调用
-  - init() 只有第一次访问 Servlet 的时候才会被调用
-  - destroy() 只有在 Tomcat 关闭的时候才会被调用
+  - 只要访问 Servlet，service( ) 就会被调用
+  - init( ) 只有第一次访问 Servlet 的时候才会被调用
+  - destroy( ) 只有在 Tomcat 关闭的时候才会被调用
 
 
 
@@ -33,7 +36,7 @@
 
 
 
-#### Servlet的细节
+#### Servlet细节
 
 - 一个已经注册的 Servlet 可以被多次映射
 - Servlet 映射的 URL 可以使用通配符
@@ -50,6 +53,22 @@
   - 原则
     - 如果一个变量需要多个用户共享，则应当在访问该变量的时候，加同步机制 synchronized (对象){}
     - 如果一个变量不需要共享，则直接在 doGet() 或者 doPost()定义.这样不会存在线程安全问题
+
+
+
+#### **Servlet**单例
+
+- 为什么是单例
+  - ⼀般情况下，服务器只创建⼀个 Servlet 对象，⼀旦创建了，就会驻留在内存中，为后续的请求做服务，直到服务器关闭
+- 每次访问请求对象和响应对象都是新的
+  - 对于每次访问请求，Servlet 引擎都会创建⼀个新的 HttpServletRequest 请求对象和⼀个新的 HttpServletResponse 响应对象
+  - 这两个对象作为参数传递给调⽤的 Servlet 的 service( )，service( ) 再根据请求⽅式分别调⽤ doGet( ) 等
+- 线程安全问题
+  - 当多个⽤户访问 Servlet 的时候，服务器会为每个⽤户创建⼀个线程
+  - 当多个⽤户并发访问 Servlet 共享资源的时候就会出现线程安全问题
+  - 原则
+    - 如果⼀个变量需要多个⽤户共享，则应当在访问该变量的时候，加同步机制 synchronized (对象) { }
+    - 如果⼀个变量不需要共享，则直接在 doGet( ) 或者 doPost( ) 定义
 
 
 
@@ -73,11 +92,36 @@
 #### ServletContext对象
 
 - 当 Tomcat 启动的时候，就会创建一个 ServletContext 对象
+
 - 它代表着当前 web 站点
+
 - 作用
+
+  - 上下文
   - ServletContext 既然代表着当前 web 站点，那么所有 Servlet 都共享着一个 ServletContext对 象，所以 Servlet 之间可以通过 ServletContext 实现通讯
+  - 实现 Servlet 之间通讯要⽤到 ServletContext 的 setAttribute( )、getAttribute( )
   - ServletConfig 获取的是配置的是单个 Servlet 的参数信息， ServletContext 可以获取的是配置整个 web 站点的参数信息
+
+  ```xml
+  <servlet>
+    <servlet-name>MyHttpServlet</servlet-name>
+    <servlet-class>com.shui.MyHttpServlet</servlet-class>
+    <init-param>
+      <param-name>name</param-name>
+      <param-value>shui</param-value>
+    </init-param>
+  </servlet>
+  ```
+
   - 利用 ServletContext 读取 web 站点的资源文件
+
+  ```xml
+  <context-param> 
+    <param-name>webName</param-name> 
+    <param-value>shui</param-value>
+  </context-param>
+  ```
+
   - 实现 Servlet 的转发
 
 - Servlet 之间实现通讯
@@ -87,6 +131,7 @@
     - 第二个参数是你要存储的对象
 
 - 获取 web 站点配置的信息
+  
   - 想要让所有的 Servlet 都能够获取到连接数据库的信息，不可能在 web.xml 文件中每个 Servlet 中都配置一下，这样代码非常啰嗦冗余
 
 
