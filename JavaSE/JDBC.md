@@ -32,11 +32,10 @@ Object_Relative DateBase-Mapping，在Java对象与关系数据库之间建立�
 
 #### 学习 API
 
-Connection、Statement、ResultSet。
-
-- Conneion： 获取与数据库链接的 对象
-- Statement：获取执行 SQL 语句的 对象
-- ResultSet：  执行 SQL 语句，获取结果集
+- Connection、Statement、ResultSet。
+  - Conneion： 获取与数据库链接的 对象
+  - Statement：获取执行 SQL 语句的 对象
+  - ResultSet：  执行 SQL 语句，获取结果集
 
 
 
