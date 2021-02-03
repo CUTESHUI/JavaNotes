@@ -60,7 +60,7 @@ httpSession.setAttribute("name","看完博客就要点赞！！");
 
 - 由于会有越来越多的用户访问服务器，因此 Session 也会越来越多，为了防止内存溢出，服务器会把长时间没有活跃的 Session 从内存中删除，这个时间也就是 Session 的超时时间。
 
-- Session 的超时时间默认是30分钟，有三种方式可以对 Session 的超时时间进行修改
+- Session 的超时时间默认是**30分钟**，有三种方式可以对 Session 的超时时间进行修改
 
   - 在 tomcat/conf/web.xml 文件中设置，时间值为20分钟，所有的 web 应用都有效
 
@@ -120,4 +120,4 @@ httpSession.setAttribute("name","看完博客就要点赞！！");
     - 如果浏览器禁用了 Cookie，Session 可以通过 URL 地址重写来进行会话跟踪
 - 跨域名
   - Cookie 可以设置 domain 属性来实现跨域名
-    - Session 只在当前的域名内有效，不可夸域名
+    - Session 只在当前的域名内有效，不可跨越域名

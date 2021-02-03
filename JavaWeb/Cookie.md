@@ -44,13 +44,13 @@
 response.setContentType("text/html;charset=UTF-8");
 
 // 创建Cookie对象，指定名称和值
-Cookie cookie = new Cookie("username", "zhongfucheng");
+Cookie Cookie = new Cookie("username", "zhongfucheng");
 
 // 设置Cookie的时间
-cookie.setMaxAge(1000);
+Cookie.setMaxAge(1000);
 
 // 向浏览器给⼀个Cookie
-response.addCookie(cookie);
+response.addCookie(Cookie);
 response.getWriter().write("我已经向浏览器发送了⼀个Cookie");
 ```
 
@@ -74,10 +74,10 @@ response.getWriter().write("我已经向浏览器发送了⼀个Cookie");
   String name = "饼干";
   
   // 对Unicode字符进⾏编码
-  Cookie cookie = new Cookie("name", URLEncoder.encode(name, "UTF-8"));
-  cookie.setMaxAge(2000);
+  Cookie Cookie = new Cookie("name", URLEncoder.encode(name, "UTF-8"));
+  Cookie.setMaxAge(2000);
   
-  response.addCookie(cookie);
+  response.addCookie(Cookie);
   printWriter.write("我颁发了⼀个Cookie，值保存的是中⽂数据");
   ```
 
@@ -112,11 +112,11 @@ response.getWriter().write("我已经向浏览器发送了⼀个Cookie");
   String name = "饼干2";
   
   // 对Unicode字符进⾏编码
-  Cookie cookie = new Cookie("name", URLEncoder.encode(name, "UTF-8"));
+  Cookie Cookie = new Cookie("name", URLEncoder.encode(name, "UTF-8"));
   
   // 删除时，⼀定不要忘记添加到浏览器中
-  cookie.setMaxAge(0);
-  response.addCookie(cookie);
+  Cookie.setMaxAge(0);
+  response.addCookie(Cookie);
   
   printWriter.write("我删除了该Cookie");
   ```
@@ -130,7 +130,7 @@ response.getWriter().write("我已经向浏览器发送了⼀个Cookie");
 - 路径
 
   - Cookie 的 path 属性决定允许访问 Cookie 的路径
-  - ⼀般地，Cookie 发布出来，整个⽹⻚的资源都可以使⽤
+  - Cookie 发布出来，整个⽹⻚的资源都可以使⽤
 
 - 安全属性
 
@@ -144,9 +144,9 @@ response.getWriter().write("我已经向浏览器发送了⼀个Cookie");
 
 - 显示⽤户上次访问的时间
   - 每次登陆的时候，取到 Cookie 保存的值，再更新下 Cookie 的值
-  - 访问Serlvet有两种情况
+  - 访问 Serlvet 有两种情况
     - 第⼀次访问
-    - 已经访问过了
+    - 已经访问过
 
 ```java
 SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-ddHH:mm:ss");
@@ -176,11 +176,11 @@ for (int i = 0; cookies != null && i < cookies.length; i++) {
 // 如果Cookie的值是空的，那么就是第⼀次访问
 if (cookieValue == null) {
   // 创建⼀个Cookie对象，⽇期为当前时间
-  Cookie cookie = new Cookie("time", simpleDateFormat.format(new Date()));
+  Cookie Cookie = new Cookie("time", simpleDateFormat.format(new Date()));
   // 设置Cookie的⽣命期
-  cookie.setMaxAge(20000);
+  Cookie.setMaxAge(20000);
   // response对象回送Cookie给浏览器
-  response.addCookie(cookie);
+  response.addCookie(Cookie);
   printWriter.write("您是第⼀次登陆！");
 }
 

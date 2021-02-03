@@ -104,13 +104,13 @@
 
   ```xml
   <servlet>
-    <servlet-name>MyHttpServlet</servlet-name>
-    <servlet-class>com.shui.MyHttpServlet</servlet-class>
+    <servlet-name>MyHttpServlet</Servlet-name>
+    <servlet-class>com.shui.MyHttpServlet</Servlet-class>
     <init-param>
       <param-name>name</param-name>
       <param-value>shui</param-value>
     </init-param>
-  </servlet>
+  </Servlet>
   ```
 
   - 利用 ServletContext 读取 web 站点的资源文件
@@ -125,8 +125,8 @@
   - 实现 Servlet 的转发
 
 - Servlet 之间实现通讯
-  - ServletContext 对象被称之为 域对象：可以简单理解成一个容器（类似于Map集合）
-  - 实现 Servlet 之间通讯就要用到 ServletContext 的 setAttribute(String name,Object obj) 方法
+  - ServletContext 对象被称之为 **域对象**，可以简单理解成一个容器（类似于Map集合）
+  - 实现 Servlet 之间通讯就要用到 ServletContext 的 setAttribute(String name, Object obj) 方法
     -  第一个参数是关键字
     - 第二个参数是你要存储的对象
 
@@ -334,7 +334,7 @@
 
   - 实际发生位置不同，地址栏不同
     - 转发：发生在服务器
-    - 转发是由服务器进行跳转的，在转发的时候，浏览器的地址栏是没有发生变化的。实现转发只是一次的 http 请求，一次转发中 request 和 response 对象都是同一个。这也解释为什么可以使用 request 作为域对象进行 Servlet 之间的通讯
+    - 转发是由服务器进行跳转的，在转发的时候，浏览器的地址栏是没有发生变化的,实现转发只是一次的 http 请求，一次转发中 request 和 response 对象都是同一个,这也解释为什么可以使用 request 作为域对象进行 Servlet 之间的通讯
     - 重定向：发生在浏览器
     - 重定向是由浏览器进行跳转的，在重定向的时候，浏览器的地址会发生变化的。实现重定向的原理是由 response 的状态码和 Location 头组合而实现的。这是由浏览器进行的页面跳转实现重定向会发出两个http请求，request域对象是无效的，因为它不是同一个request对象
 
@@ -342,7 +342,7 @@
     - 转发：服务器跳转，只能去往当前 web 应用的资源
     - 重定向：浏览器跳转，可以去往任何的资源
   - 传递的数据类型不同
-    - 转发：的 request 对象可以传递各种类型的数据，包括对象
+    - 转发：request 对象可以传递各种类型的数据，包括对象
     - 重定向：只能传递字符串
   - 跳转的时间不同
     - 转发：执行到跳转语句时就会立刻跳转
