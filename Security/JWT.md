@@ -2,9 +2,12 @@
 
 #### Token种类
 
-- 自定义的 token：开发者根据业务逻辑自定义的 token
-- JWT：JSON Web Token，定义在 RFC 7519 中的一种 token 规范
-- Oauth2.0：定义在 RFC 6750 中的一种授权规范，但这其实并不是一种 token，只是其中也有用到 token
+- 自定义 token
+  - 开发者根据业务逻辑自定义的 token
+- Oauth2.0
+  - 定义在 RFC 6750 中的一种授权规范，但这其实并不是一种 token，只是其中也有用到 token
+- JWT
+  - JSON Web Token，定义在 RFC 7519 中的一种 token 规范
 
 
 
@@ -69,19 +72,39 @@
   
 - 头部（header）
 
-  - 头部通常由两部分组成
-    - 令牌的类型（即 JWT）
-    - 正在使用的签名算法（如 HMAC SHA256 或 RSA）
+  - 一个描述 JWT 元数据的 JSON 对象
+
+  - 由两部分组成
+    - alg (algorithm)：签名使用的算法
+    - typ (type)：令牌类型
+  - 最后，使用 Base64 URL 算法将 JSON  对象转换为字符串保存
+
+  ```json
+  {
+    "alg": "HS256",
+    "typ": "JWT"
+  }
+  ```
 
 - 载荷（Payload）
 
   - 载荷中放置了 token 的一些基本信息，以帮助接受它的服务器来理解这个 token，同时还可以包含一些自定义的信息，用户信息交换
 
-  - 载荷的属性也分三类：
+  - 由七部分可以选择
 
+    - iss (issuer)：签发人
+  - sub (subject)：主题
+    - aud (audience)：受众
+    - exp (expiration time)：过期时间
+    - nbf (Not Before)：生效时间，在此之前是无效的
+    - iat (Issued At)：签发时间
+    - jti (JWT ID)：编号
+  
+  - 属性也分三类：
+  
     - 预定义（Registered）
-
-    ```
+  
+    ```json
     {
       "sub": "1",
       "iss": "http://localhost:8000/auth/login",
@@ -90,26 +113,37 @@
       "nbf": 1451888119,
       "jti": "37c107e4609ddbcc9c096ea5ee76c667",
       "aud": "dev"
-    }
-    
-    iss (issuer)：签发人
-    sub (subject)：主题
-    aud (audience)：受众
-    exp (expiration time)：过期时间
-    nbf (Not Before)：生效时间，在此之前是无效的
-    iat (Issued At)：签发时间
-    jti (JWT ID)：编号
+  }
     ```
-
+    
     - 公有（public）
     - 私有（private）
-  
-- 签名（Signature）
-  
+
+
+
+#### 签名
+
+- Signature
+- 通过指定的算法生成哈希，以确保数据不会被篡改
+- 算法
+  - 首先，需要指定一个密码（secret）。该密码仅仅为保存在服务器中，并且不能向用户公开
+  - 使用标头中指定的签名算法（默认情况下为 HMAC SHA256）生成签名
+  - 在计算出签名哈希后，JWT 头，有效载荷和签名哈希的三个部分组合成一个字符串，每个部分用"."分隔，构成整个 JWT 对象
+- 公式
+  - HMACSHA256(base64UrlEncode(header) + "." + base64UrlEncode(claims), secret)
 - 保证 JWT 没有被篡改过
-  - 原理
   - HMAC 算法是不可逆算法，类似 MD5 和 hash ，但多一个密钥，密钥（即上面的 secret）由服务端持有，客户端把 token 发给服务端后，服务端可以把其中的头部和载荷再加上事先共享的 secret 再进行一次 HMAC 加密，得到的结果和 token 的第三段进行对比，如果一样则表明数据没有被篡改
-  
+
+
+
+#### Base64URL
+
+- JWT 头和有效载荷序列化的算法都用到了 Base64URL
+- 该算法和常见 Base64 算法类似，稍有差别
+- 算法
+  - 作为令牌的 JWT 可以放在 URL 中（例如 api.example/?token=xxx）
+  - Base64 中用的三个字符是"+"，"/"和"="，由于在 URL 中有特殊含义因此 Base64URL 中对他们做了替换
+  - "="去掉，"+"用"-"替换，"/"用"_"替换
 
 
 

@@ -273,3 +273,54 @@
   - T orElseGet (Supplier<? extends T> other)：如果有值则将其返回，否则返回由 Supplier 接口实现提供的对象
     - T orElseThrow (Supplier<? extends X> exceptionSupplier)：如果有值则将其返回，否则抛出由Supplier接口实现提供的异常
 
+
+
+#### forEach
+
+- 使用 forEach 迭代集合并对每个元素执行特定操作
+- 要执行的操作包含在实现 Consumer 接口的类中，并作为参数传递给 forEach
+- Consumer 接口是一个功能接口（具有单个抽象方法的接口），它接受输入并且不返回任何结果
+
+```java
+@FunctionalInterface
+public interface Consumer {
+  void accept(T t);
+}
+```
+
+- Lambda 表达式
+
+```java
+for (String name : names) {
+  System.out.println(name);
+}
+
+names.forEach(name -> System.out.println(name));
+
+names.forEach(System.out::println);
+```
+
+- 在集合中使用
+
+  - 任何类型 Collection 都具有使用 forEach 的语法
+
+  ```java
+  // list
+  List<String> names = Arrays.asList("Larry", "Steve", "James");
+  names.forEach(System.out::println);
+  
+  // set
+  Set<String> uniqueNames = new HashSet<>(Arrays.asList("Larry", "Steve", "James"));
+  uniqueNames.forEach(System.out::println);
+  
+  // queue
+  Queue<String> namesQueue = new ArrayDeque<>(Arrays.asList("Larry", "Steve", "James"));
+  namesQueue.forEach(System.out::println);
+  
+  // map
+  Map<Integer, String> namesMap = new HashMap<>();
+  namesMap.forEach((key, value) -> System.out.println(key + " " + value));
+  namesMap.entrySet().forEach(entry -> System.out.println(entry.getKey() + " " + entry.getValue()));
+  ```
+
+  

@@ -19,6 +19,7 @@
 - File类和IO流
 - Java8新特性
 - JDBC
+- JavaSE易错点
 
 #### JavaAdvance
 
@@ -43,7 +44,6 @@
 - RESTful
 - SSO
 - VUE
-- JWT
 - CDN
 - SEO
 - XSS
@@ -67,6 +67,8 @@
 
 #### Spring
 
+- AOP
+- IOC
 - Spring
 - SpringMVC
 - SpringBoot
@@ -76,6 +78,7 @@
 
 #### Security
 
+- JWT
 - OAuth2
 - SpringSecurity
 - SpringCloudSecurity_OAuth2
