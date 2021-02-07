@@ -11,6 +11,18 @@
 
 
 
+#### 特征
+
+- Spring 官网列出的 6 个特征
+  - 核心技术 ：依赖注入(DI)，AOP，事件(events)，资源，i18n，验证，数据绑定，类型转换，SpEL
+  - 测试 ：模拟对象，TestContext框架，Spring MVC 测试，WebTestClient
+  - 数据访问 ：事务，DAO支持，JDBC，ORM，编组XML
+  - Web支持 : Spring MVC和Spring WebFlux Web框架
+  - 集成 ：远程处理，JMS，JCA，JMX，电子邮件，任务，调度，缓存
+  - 语言 ：Kotlin，Groovy，动态语言
+
+
+
 #### 侵⼊式、非侵入式
 
 - 侵入式：
@@ -149,9 +161,15 @@
 
 
 
+#### IOC
 
-#### IOC控制反转
-
+- 一种设计思想：将原本在程序中手动创建对象的控制权，交由 Spring 框架来管理
+- IoC 容器是 Spring 用来实现 IoC 的载体， IoC 容器实际上就是个Map（key，value），Map 中存放的是各种对象
+- 优点
+  - 这样可以很大程度上简化应用的开发，把应用从复杂的依赖关系中解放出来
+  -  IoC 容器就像是一个工厂一样，当需要创建一个对象的时候，只需要配置好配置文件/注解即可，完全不用考虑对象是如何被创建出来的。
+  - 在实际项目中一个 Service 类可能有几百甚至上千个类作为它的底层，假如我们需要实例化这个 Service，你可能要每次都要搞清这个 Service 所有底层类的构造函数，如果利用 IoC 的话，只需要配置好，然后在需要的地方引用就行了，这大大增加了项目的可维护性且降低了开发难度
+- Spring 时代一般通过 XML 文件来配置 Bean，后来开发人员觉得 XML 文件来配置不太好，于是 SpringBoot 注解配置就慢慢开始流行起来
 - 装配 Bean ⽅式
   - Spring4.x 开始有4种⽅式
     - XML 配置
@@ -227,7 +245,7 @@ public class App {
 
 #### AOP
 
-- aspect object programming ⾯向切⾯编程
+- aspect object programming
 
 - ⾯向切⾯的编程
 

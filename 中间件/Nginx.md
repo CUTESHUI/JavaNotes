@@ -41,7 +41,7 @@ large_client_header_buffers 4 64k; #设定请求缓
 client_max_body_size 8m; #设定请求缓
 sendfile on; #开启高效文件传输模式，sendfile指令指定nginx是否调用sendfile函数来输出文件，对于普通应用设为 on，如果用来进行下载等应用磁盘IO重负载应用，可设置为off，以平衡磁盘与网络I/O处理速度，降低系统的负载。注意：如果图片显示不正常把这个改成off。
 autoindex on; #开启目录列表访问，合适下载服务器，默认关闭。
-tcp_nopush on; #防止网络阻塞
+tcp_nopush on;  #防止网络阻塞
 tcp_nodelay on; #防止网络阻塞
 keepalive_timeout 120; #长连接超时时间，单位是秒
 
@@ -65,7 +65,8 @@ gzip_types text/plain application/x-javascript text/css application/xml;
 gzip_vary on;   # 是否传输gzip压缩标志
 #limit_zone crawler $binary_remote_addr 10m; #开启限制IP连接数的时候需要使用
 
-upstream blog.ha97.com {
+# 反向代理，名字自定义
+upstream shuiman.com {
 #upstream的负载均衡，weight是权重，可以根据机器配置定义权重。weigth参数表示权值，权值越高被分配到的几率越大。
 server 192.168.80.121:80 weight=3;
 server 192.168.80.122:80 weight=2;
@@ -106,20 +107,20 @@ access_log /var/log/nginx/ha97access.log access;
 
 #对 "/" 启用反向代理
 location / {
-proxy_pass http://127.0.0.1:88;
+proxy_pass http://shuiman;
 proxy_redirect off;
 proxy_set_header X-Real-IP $remote_addr;
 #后端的Web服务器可以通过X-Forwarded-For获取用户真实IP
 proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
 #以下是一些反向代理的配置，可选。
 proxy_set_header Host $host;
-client_max_body_size 10m; #允许客户端请求的最大单文件字节数
+client_max_body_size 10m;     #允许客户端请求的最大单文件字节数
 client_body_buffer_size 128k; #缓冲区代理缓冲用户端请求的最大字节数，
-proxy_connect_timeout 90; #nginx跟后端服务器连接超时时间(代理连接超时)
-proxy_send_timeout 90; #后端服务器数据回传时间(代理发送超时)
-proxy_read_timeout 90; #连接成功后，后端服务器响应时间(代理接收超时)
-proxy_buffer_size 4k;  #设置代理服务器（nginx）保存用户头信息的缓冲区大小
-proxy_buffers 4 32k;   #proxy_buffers缓冲区，网页平均在32k以下的设置
+proxy_connect_timeout 90;     #nginx跟后端服务器连接超时时间(代理连接超时)
+proxy_send_timeout 90;        #后端服务器数据回传时间(代理发送超时)
+proxy_read_timeout 90;        #连接成功后，后端服务器响应时间(代理接收超时)
+proxy_buffer_size 4k;         #设置代理服务器（nginx）保存用户头信息的缓冲区大小
+proxy_buffers 4 32k;          #proxy_buffers缓冲区，网页平均在32k以下的设置
 proxy_busy_buffers_size 64k;    #高负荷下缓冲大小（proxy_buffers*2）
 proxy_temp_file_write_size 64k; #设定缓存文件夹大小，大于这个值，将从upstream服务器传
 }
@@ -153,6 +154,8 @@ location ~ .*.(js|css)?$
 
 
 #### 常用配置案例
+
+- 例子1
 
 ```bash
 user  nginx nginx;
@@ -369,7 +372,63 @@ http {
 }
 ```
 
+- 例子2
+
+```bash
+resolver 10.0.0.1;
+
+# 负载均衡
+upstream dynamic {    
+    zone upstream_dynamic 64k;
+
+    server backend1.example.com      weight=5;
+    server backend2.example.com:8080 fail_timeout=5s slow_start=30s;
+    server 192.0.2.1                 max_fails=3;
+    server backend3.example.com      resolve;
+    server backend4.example.com      service=http resolve;
+
+    server backup1.example.com:8080  backup;
+    server backup2.example.com:8080  backup;
+}
+
+# http服务
+server {
+    listen 80;
+    server_name example.com www.example.com;
+    location / {
+        rewrite https://$host; # 重定向到https
+    }
+}
+
+# https 服务
+server {
+    listen 443 ssl; # 监听端口
+    server_name example.com www.example.com; # 匹配域名
+
+    # ssl证书
+    ssl_protocols       TLSv1 TLSv1.1 TLSv1.2;
+    ssl_ciphers         AES128-SHA:AES256-SHA:RC4-SHA:DES-CBC3-SHA:RC4-MD5;
+    ssl_certificate     /usr/local/nginx/conf/cert.pem;
+    ssl_certificate_key /usr/local/nginx/conf/cert.key;
+    ssl_session_cache   shared:SSL:10m;
+    ssl_session_timeout 10m;
+
+    # 静态服务
+    location / {
+        root /usr/share/nginx/html;
+        index index.html index.htm;
+    }
+    # 反向代理
+    location /api {
+        proxy_pass http://dynamic;
+        health_check;
+    }
+}
+```
+
 ---
+
+
 
 #### 重定向 301
 

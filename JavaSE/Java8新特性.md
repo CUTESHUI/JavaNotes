@@ -320,6 +320,7 @@ names.forEach(System.out::println);
   // map
   Map<Integer, String> namesMap = new HashMap<>();
   namesMap.forEach((key, value) -> System.out.println(key + " " + value));
+  
   namesMap.entrySet().forEach(entry -> System.out.println(entry.getKey() + " " + entry.getValue()));
   ```
 
