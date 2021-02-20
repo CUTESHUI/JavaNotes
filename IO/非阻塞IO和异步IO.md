@@ -126,7 +126,7 @@ public class SocketChannelTest {
 
       select 和 poll 都有一个共同的问题，那就是它们都只会告诉你有几个通道准备好了，但是不会告诉你具体是哪几个通道。所以，一旦知道有通道准备好以后，自己还是需要进行一次扫描，显然这个不太好，通道少的时候还行，一旦通道的数量是几十万个以上的时候，扫描一次的时间都很可观了，时间复杂度 O(n)
 
-    - epoll
+  - epoll
 
       - 2002 年随 Linux 内核 2.5.44 发布
       - epoll 能直接返回具体的准备好的通道，时间复杂度 O(1)
@@ -216,7 +216,8 @@ public class SelectorServer {
   - future.isDone( )
     - 判断操作是否已经完成，包括了正常完成、异常抛出、取消
   - future.cancel(true)
-    - 取消操作，方式是中断。参数 true 说的是，即使这个任务正在执行，也会进行中断
+    - 取消操作，方式是中断
+    - 参数 true 表示，即使这个任务正在执行，也会进行中断
   - future.isCancelled( )
     - 是否被取消，只有在任务正常结束之前被取消，这个方法才会返回 true
   - future.get( )
@@ -241,10 +242,13 @@ public class SelectorServer {
   
   // accept 方法的第一个参数可以传递 attachment
   listener.accept(attachment, new CompletionHandler<AsynchronousSocketChannel, Object>() {
+    @Override
     public void completed(
       AsynchronousSocketChannel client, Object attachment) {
       // 
     }
+    
+    @Override
     public void failed(Throwable exc, Object attachment) {
       // 
     }

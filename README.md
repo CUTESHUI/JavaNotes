@@ -24,9 +24,6 @@
 
 #### JavaAdvance
 
-- NIO
-- Netty
-- 非阻塞IO和异步IO
 - Activity
 - RPC
 - 分布式ID
@@ -55,6 +52,12 @@
 - Cookie
 - 过滤器
 - 监听器
+
+#### IO
+
+- NIO
+- Netty
+- 非阻塞IO和异步IO
 
 #### MySQL
 
