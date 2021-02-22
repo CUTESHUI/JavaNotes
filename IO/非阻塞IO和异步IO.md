@@ -242,13 +242,11 @@ public class SelectorServer {
   
   // accept 方法的第一个参数可以传递 attachment
   listener.accept(attachment, new CompletionHandler<AsynchronousSocketChannel, Object>() {
-    @Override
     public void completed(
       AsynchronousSocketChannel client, Object attachment) {
       // 
     }
     
-    @Override
     public void failed(Throwable exc, Object attachment) {
       // 
     }

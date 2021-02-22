@@ -1,4 +1,4 @@
-## Netty
+Netty
 
 #### BIO、NIO、AIO区别
 
@@ -114,7 +114,7 @@
 
 
 
-#### 基于Netty的TCP
+#### 基于 Netty的 TCP
 
 - 通过两段简短的代码得到了一个基于主从 Reactor 多线程模式的服务器，一个高吞吐量和并发量的服务器，一个异步处理服务器...
 - 服务端
@@ -152,13 +152,8 @@ public static void main(String[] args) throws InterruptedException {
                         new ChannelInitializer<SocketChannel>() {
                             // 向 Pipeline 添加业务处理器
                             @Override
-                            protected void initChannel(
-                                    SocketChannel socketChannel
-                            ) throws Exception {
-                                socketChannel.pipeline().addLast(
-                                        new NettyServerHandler()
-                                );
-                                
+                            protected void initChannel(SocketChannel socketChannel) throws Exception {
+                                socketChannel.pipeline().addLast(new NettyServerHandler());
                                 // 可以继续调用 socketChannel.pipeline().addLast()
                                 // 添加更多 Handler
                             }
@@ -192,17 +187,14 @@ static class NettyServerHandler extends ChannelInboundHandlerAdapter {
      * @throws Exception
      */
     @Override
-    public void channelRead(ChannelHandlerContext ctx, Object msg)
-            throws Exception {
+    public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
         // 接收客户端发来的数据
 
-        System.out.println("client address: "
-                + ctx.channel().remoteAddress());
+        System.out.println("client address: " + ctx.channel().remoteAddress());
 
         // ByteBuf 是 Netty 提供的类，比 NIO 的 ByteBuffer 性能更高
         ByteBuf byteBuf = (ByteBuf) msg;
-        System.out.println("data from client: "
-                + byteBuf.toString(CharsetUtil.UTF_8));
+        System.out.println("data from client: " + byteBuf.toString(CharsetUtil.UTF_8));
     }
 
     /**
@@ -212,17 +204,13 @@ static class NettyServerHandler extends ChannelInboundHandlerAdapter {
      * @throws Exception
      */
     @Override
-    public void channelReadComplete(ChannelHandlerContext ctx)
-            throws Exception {
+    public void channelReadComplete(ChannelHandlerContext ctx) throws Exception {
         // 发送响应给客户端
         ctx.writeAndFlush(
                 // Unpooled 类是 Netty 提供的专门操作缓冲区的工具
                 // 类，copiedBuffer 方法返回的 ByteBuf 对象类似于
                 // NIO 中的 ByteBuffer，但性能更高
-                Unpooled.copiedBuffer(
-                        "hello client! i have got your data.",
-                        CharsetUtil.UTF_8
-                )
+                Unpooled.copiedBuffer("hello client! i have got your data.", CharsetUtil.UTF_8)
         );
     }
 
@@ -234,8 +222,7 @@ static class NettyServerHandler extends ChannelInboundHandlerAdapter {
      * @throws Exception
      */
     @Override
-    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause)
-            throws Exception {
+    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
         // 关闭与客户端的 Socket 连接
         ctx.channel().close();
     }
@@ -265,13 +252,8 @@ public static void main(String[] args) throws InterruptedException {
                         new ChannelInitializer<SocketChannel>() {
                             // 向 Pipeline 添加业务处理器
                             @Override
-                            protected void initChannel(
-                                    SocketChannel socketChannel
-                            ) throws Exception {
-                                socketChannel.pipeline().addLast(
-                                        new NettyClientHandler()
-                                );
-                                
+                            protected void initChannel(SocketChannel socketChannel) throws Exception {
+                                socketChannel.pipeline().addLast(new NettyClientHandler());
                                 // 可以继续调用 socketChannel.pipeline().addLast()
                                 // 添加更多 Handler
                             }
@@ -281,9 +263,7 @@ public static void main(String[] args) throws InterruptedException {
         System.out.println("client is ready...");
 
         // 启动客户端去连接服务器端，ChannelFuture 涉及到 Netty 的异步模型，后面展开讲
-        ChannelFuture channelFuture = bootstrap.connect(
-                "127.0.0.1",
-                8080).sync();
+        ChannelFuture channelFuture = bootstrap.connect("127.0.0.1", 8080).sync();
         // 对通道关闭进行监听
         channelFuture.channel().closeFuture().sync();
     } finally {
@@ -304,17 +284,13 @@ static class NettyClientHandler extends ChannelInboundHandlerAdapter {
      * @throws Exception
      */
     @Override
-    public void channelActive(ChannelHandlerContext ctx)
-            throws Exception {
+    public void channelActive(ChannelHandlerContext ctx) throws Exception {
         // 向服务器发送数据
         ctx.writeAndFlush(
                 // Unpooled 类是 Netty 提供的专门操作缓冲区的工具
                 // 类，copiedBuffer 方法返回的 ByteBuf 对象类似于
                 // NIO 中的 ByteBuffer，但性能更高
-                Unpooled.copiedBuffer(
-                        "hello server!",
-                        CharsetUtil.UTF_8
-                )
+                Unpooled.copiedBuffer("hello server!",　CharsetUtil.UTF_8)
         );
     }
 
@@ -326,17 +302,14 @@ static class NettyClientHandler extends ChannelInboundHandlerAdapter {
      * @throws Exception
      */
     @Override
-    public void channelRead(ChannelHandlerContext ctx, Object msg)
-            throws Exception {
+    public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
         // 接收服务器端发来的数据
 
-        System.out.println("server address: "
-                + ctx.channel().remoteAddress());
+        System.out.println("server address: " + ctx.channel().remoteAddress());
 
         // ByteBuf 是 Netty 提供的类，比 NIO 的 ByteBuffer 性能更高
         ByteBuf byteBuf = (ByteBuf) msg;
-        System.out.println("data from server: "
-                + byteBuf.toString(CharsetUtil.UTF_8));
+        System.out.println("data from server: " + byteBuf.toString(CharsetUtil.UTF_8));
     }
 
     /**
@@ -347,8 +320,7 @@ static class NettyClientHandler extends ChannelInboundHandlerAdapter {
      * @throws Exception
      */
     @Override
-    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause)
-            throws Exception {
+    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
         // 关闭与服务器端的 Socket 连接
         ctx.channel().close();
     }
@@ -359,93 +331,331 @@ static class NettyClientHandler extends ChannelInboundHandlerAdapter {
 
 #### Netty 核心组件
 
-- Buffer（缓冲区）
+---
 
-  - 本质上是一个可读可写的内存块，可以理解成一个容器对象，Channel 读写文件或者网络都要经由 Buffer
-  - 在 Java NIO 中，Buffer 是一个顶层抽象类，它的常用子类有：
-    - ByteBuffer
-    - CharBuffer
-    - ShortBuffer
-    - IntBuffer
-    - LongBuffer
-    - DoubleBuffer
-    - FloatBuffer
-  - 其中 ByteBuffer 支持类型化的数据存取，即可以往 ByteBuffer 中放 byte 类型数据、也可以放 char、int、long、double 等类型的数据，但读取的时候要做好类型匹配处理，否则会抛出 BufferUnderflowException
-  - Buffer 体系中还有一个重要的 MappedByteBuffer（ByteBuffer 的子类），可以让文件内容直接在堆外内存中被修改，而如何同步到文件由 NIO 来完成
+#### Bytebuf（字节容器）
 
-- Channel（网络操作抽象类）
+- 网络通信最终都是通过字节流进行传输的
 
-  - 双向，可读可写
-  - 在 Java NIO 中，Buffer 是一个顶层接口，它的常用子类有：
-    - FileChannel：用于文件读写
-    - DatagramChannel：用于 UDP 数据包收发
-    - ServerSocketChannel：用于服务端 TCP 数据包收发
-    - SocketChannel：用于客户端 TCP 数据包收发
+- Netty 为了解决 Buffer 原生接口的复杂操作提供了 ByteBuf， ByteBuf是一个很好的经过优化过的数据容器，其内部是一个字节数组，可以将字节数据添加到 ByteBuf 中或从 ByteBuf 中获取数据， 相比于原生 Buffer，ByteBuf 更加灵活和易用
 
-- EventLoop（事件循环）
+- Netty 的数据处理主要通过两个API 提供
 
-- Selector（选择器）
+  - abstract class ByteBuf
+  - interface ByteBufHolder
 
-  - Netty 的 IO 线程 NioEventLoop 聚合了 Selector，可以同时并发处理成百上千的客户端连接
+- 使用 ByteBuf API 能够带来良好的编码体验
 
-  - 实现 IO 多路复用的关键，多个 Channel 注册到某个 Selector 上，当 Channel 上有事件发生时，Selector 就会取得事件然后调用线程去处理事件
-  - IO 多路复用的核心：
-    - 只有当连接上真正有读写等事件发生时，线程才会去进行读写等操作，这就不必为每个连接都创建一个线程，一个线程可以应对多个连接
-  - 在 Java NIO 中，Selector 是一个抽象类，常用方法有：
+  - 正常情况下，ByteBuf 比 ByteBuffer 的性能更好
+  - 实现了 ReferenceCounted 引用计数接口，优化了内存的使用
+  - 容量可以动态增长，如 StringBuilder 和 String
+  - 在读和写这两种模式切换时，无需像 ByteBuffer 一样调用 flip 方法，更易于操作
+  - ...
 
-  ```java
-  public abstract class Selector implements Closeable {
-      ......
-      
-      /**
-       * 得到一个选择器对象
-       */
-      public static Selector open() throws IOException {
-          return SelectorProvider.provider().openSelector();
-      }
-      ......
-  
-      /**
-       * 返回所有发生事件的 Channel 对应的 SelectionKey 的集合，通过
-       * SelectionKey 可以找到对应的 Channel
-       */
-      public abstract Set<SelectionKey> selectedKeys();
-      ......
-      
-      /**
-       * 返回所有 Channel 对应的 SelectionKey 的集合，通过 SelectionKey
-       * 可以找到对应的 Channel
-       */
-      public abstract Set<SelectionKey> keys();
-      ......
-      
-      /**
-       * 监控所有注册的 Channel，当其中的 Channel 有 IO 操作可以进行时，
-       * 将这些 Channel 对应的 SelectionKey 找到。参数用于设置超时时间
-       */
-      public abstract int select(long timeout) throws IOException;
-      
-      /**
-      * 无超时时间的 select 过程，一直等待，直到发现有 Channel 可以进行
-      * IO 操作
-      */
-      public abstract int select() throws IOException;
-      
-      /**
-      * 立即返回的 select 过程
-      */
-      public abstract int selectNow() throws IOException;
-      ......
-      
-      /**
-      * 唤醒 Selector，对无超时时间的 select 过程起作用，终止其等待
-      */
-      public abstract Selector wakeup();
-      ......
+- ByteBuf 实现
+
+  - ByteBuf 维护了两个不同的索引：一个是用于读取的 readerIndex ， 一个是用于写入的 writerIndex。
+  - 当写入字节到 ByteBuf 后，writerIndex 增加，开始读取字节后，readerIndex 开始增加
+  - 读取字节直到 readerIndex 和 writerIndex 到达同一位置（已经读取到末尾了），ByteBuf 就变为不可读
+  - 当调用 ByteBuf 以 read 或 write 开头的方法时，将会增加这个 ByteBuf 的读索引或写索引，而诸如 set 或 get 的方法则不会改变索引
+  - 可以指定 ByteBuf 的最大容量，如果对 ByteBuf 的写入操作导致 writerIndex 超出了最大人容量，那么程序将会 抛出一个异常，ByteBuf 的最大人容量是 Integer.MAX_VALUE
+
+- ByteBuf 使用模式
+
+  - 堆缓冲模式
+    - 堆缓冲区(HeapByteBuf)： 最常用的 ByteBuf 模式是将数据存储在 JVM 的堆空间中，实际上是通过数组存储数据， 所以这种模式被称为支撑数组（Backing Array ）
+    - 这种模式被称为支撑数组可以在没有使用池化的情况下快速分配和释放， 适合用于有遗留数据需要处理的情况
+
+  - 直接缓冲模式
+    - 直接缓冲区(DirectByteBuf)： 在 Java 中创建的对象大部分都是存储在堆区之中的，但这不是绝对的，在 NIO 的 API 中， 允许 Buffer 分配直接内存，即操作系统的内存
+    - 好处： 前面在传输章节介绍过的零拷贝技术的 特点之一就是规避了多次 IO 拷贝，而现在数据直接就在直接内存中，而不是在 JVM 应用进程中，这不仅减少了拷贝次数， 是否还意味着减少了用户态与内核态的上下文切换呢
+    - 缺点： 直接内存的分配和释放都较为昂贵，而且因为直接缓冲区的数据不是在堆区的，所以在某些时候可能需要将直接缓冲区的数据先拷贝一个副本到堆区， 再对这个副本进行操作
+
+  - 复合缓冲模式
+    - 复合缓冲区（CompositeByteBuf）： CompositeByteBuf 为多个 ByteBuf 提供了一个聚合视图，根据需要，向 CompositeByteBuf 中添加或删除 ByteBuf 实例，所以 CompositeByteBuf 中可能 同时包含直接缓冲区模式和堆缓冲区模式的 ByteBuf
+    - 对于 CompositeByteBuf的hasArray 方法， 如果 CompositeByteBuf 中只有一个 ByteBuf 实例，那么 CompositeByteBuf 的 hasArray 方法 将直接返回这唯一一个 ByteBuf的hasArray 方法的结果，否则返回 false
+
+- ByteBufHolder
+
+  - ByteBuf 几乎唯一的作用就是存储数据，在实际的数据传输中，除了数据，可能还需要存储各种属性值，Http 便是一个很好的例子，除了Http Content，还包括状态码，cookie 等属性，不能把这些属性与 Content 存储在一个 ByteBuf 中， 所以Netty提供了 ByteBufHolder
+  - ByteBufHolder 为 Netty 提供了高级特性的支持，如缓冲区持化，使得可以从池中借用 ByteBuf，并且在需要的时候自动释放
+  - 常用方法
+    - content：返回 ByteBufHolder 所持有的 ByteBuf
+    - copy：返回 ByteBufHolder 的深拷贝，连它持有的 ByteBuf 也拷贝
+
+- ByteBuf 分配
+
+  - ByteBufAllocator
+    - 了减少分配和释放内存的开销，Netty 通过 ByteBufAllocator 实现了 ByteBuf 的池化，常用方法
+      - buffer：返回一个基于堆或直接内存的 ByteBuf，具体取决于实现。
+      - heapBuffer：返回一个基于堆内存的 ByteBuf
+      - directBuffer：返回一个基于直接内存的 ByteBuf
+      - compositeBuffer：返回一个组合 ByteBuf
+      - ioBuffer：返回一个用于套接字的 ByteBuf
+    - Netty 提供了两种 ByteBufAllocator 的实现：PooledByteBufAllocator（默认）、UnpooledByteBufAllocator
+      - PooledByteBufAllocator 池化了 ByteBuf 的实例，提高了性能并最大限度的减少内存碎片，此实现的分配内存的方法 是使用 jemalloc，这种方法分配内存的效率非常高，已被大量现代操作系统采用
+      - UnpooledByteBufAllocator 不会池化 ByteBuf
+  - Unpooled
+    - 当 Channel 或 ChannelHandlerContext 未引用 ByteBufAllocator 时，就无法使用 ByteBufAllocator 来分配 ByteBUf，对于这种情况，Netty提供了Unpooled工具类，它提供了一系列的静态方法来分配未池化的 ByteBuf
+  - ByteBufUtil
+    - ByteBufUtil 是 ByteBuf 的一个工具类，它提供大量操作 ByteBuf 的方法，，其中非常重要的一个方法就是 hexDump，这个方法会以16进制的形式来表示 ByteBuf 的内容。另一个很重要的方法是equals，它被用于判断 ByteBuf 之间的相等性
+
+- 引用计数
+
+  - JVM 的垃圾回收有引用计数法和可达性分析这两种算法判断对象是否存活，Netty 使用了引用计数法来优化内存的使用
+  - 引用计数确保了当对象的引用计数大于1时，对象就不会被释放，当计数减少至0时， 对象就会被释放，
+  - 如果程序访问一个已被释放的引用计数对象，那么将会导致一个 IllegalReferenceCountException 异常
+  - 在Netty中，ByteBuf 和 ByteBufHolder 都实现了 ReferenceCounted 接口
+
+
+
+#### Bootstrap 和 ServerBootstrap（启动引导类）
+
+- 引导类的层次结构包括一个抽象的父类（AbstractBootstrap）和两个具体的引导子类（Bootstrap、ServerBootstrap）
+
+- AbstractBootstrap 的主要方法
+
+  - goup( )：设置用语处理所有事件的 EventLoopGroup
+  - channel( )：指定服务端或客户端的 Channel
+
+  - channelFactory( )：如果引导没有指定 Channel，那么可以指定 ChannelFactory 来创建 Channel
+  - localAddress( )：指定 Channel 需要绑定的本地地址，如果不指定，则将由系统随机分配一个地址
+  - remoteAddress( )：设置 Channel 需要连接的远程地址
+  - attr( )：指定新创建的 Channel 的属性值
+  - handler( )：设置添加到 ChannelPipeline 中的 ChannelHandler
+  - connect( )：连接到远程主机，返回 ChannelFuture，用于连接完成的回调
+  - bind( )：绑定指定地址，返回 ChannelFuture，用于绑定完成的回调
+
+- Bootstrap 
+
+  - 客户端的启动引导类 / 辅助类
+
+```java
+EventLoopGroup group = new NioEventLoopGroup();
+try {
+  // 创建客户端启动引导/辅助类：Bootstrap
+  Bootstrap b = new Bootstrap();
+  // 指定线程模型
+  b.group(group).
+    ......
+  // 尝试建立连接
+  ChannelFuture f = b.connect(host, port).sync();
+  f.channel().closeFuture().sync();
+} finally {
+  // 优雅关闭相关线程组资源
+  group.shutdownGracefully();
+}
+```
+
+  - 作为客户端，需要使用到 connect API 来连接到远程 服务端
+
+```java
+// 创建EventLoopGroup
+EventLoopGroup group = new NioEventLoopGroup();
+// 创建客户端引导
+Bootstrap bootstrap = new Bootstrap();
+// 配置各种属性，如Channel，ChannelHandler等 
+bootstrap.group(group) 
+  .channel(NioSocketChannel.class)
+  .handler(new SimpleChannelInboundHandler<ByteBuf>() { 
+    @Override
+    protected void channeRead0(
+      ChannelHandlerContext channelHandlerContext,
+      ByteBuf byteBuf) throws Exception {
+      System.out.println("Received data");
+      byteBuf.clear();
+    }
+  });
+
+// 作为客户端
+// 连接到远程主机
+ChannelFuture future = bootstrap.connect(new InetSocketAddress("www.manning.com", 80)); 
+// 设置连接成功后的回调
+future.addListener(new ChannelFutureListener() {
+  @Override
+  public void operationComplete(ChannelFuture channelFuture)throws Exception {
+    if (channelFuture.isSuccess()) {
+      System.out.println("Connection established");
+    } else {
+      System.err.println("Connection attempt failed");
+      channelFuture.cause().printStackTrace();
+    }
   }
-  ```
+});
+```
 
-  
+- ServerBootstrap
+
+  - 客户端的启动引导类 / 辅助类
+
+
+```java
+// 1.bossGroup 用于接收连接，workerGroup 用于具体的处理
+EventLoopGroup bossGroup = new NioEventLoopGroup(1);
+EventLoopGroup workerGroup = new NioEventLoopGroup();
+try {
+  //2.创建服务端启动引导/辅助类：ServerBootstrap
+  ServerBootstrap b = new ServerBootstrap();
+  //3.给引导类配置两大线程组,确定了线程模型
+  b.group(bossGroup, workerGroup).
+    ......
+    // 6.绑定端口
+    ChannelFuture f = b.bind(port).sync();
+  // 等待连接关闭
+  f.channel().closeFuture().sync();
+} finally {
+  //7.优雅关闭相关线程组资源
+  bossGroup.shutdownGracefully();
+  workerGroup.shutdownGracefully();
+	}
+}
+```
+
+- 作为服务端，需要使用 bind API 来 与本地地址绑定，从而接收客户端连接
+
+```java
+// 创建EventLoopGroup
+NioEventLoopGroup group = new NioEventLoopGroup();
+// 创建服务端引导
+ServerBootstrap bootstrap = new ServerBootstrap();
+// 配置各种属性，如Channel，ChannelHandler等 
+bootstrap.group(group)
+  .channel(NioServerSocketChannel.class) 
+  .childHandler(new SimpleChannelInboundHandler<ByteBuf>() {
+    @Override
+    protected void channelRead0(ChannelHandlerContext ctx, yteBuf byteBuf) throws Exception {
+      System.out.println("Reveived data");
+      byteBuf.clear();
+    }
+  });
+
+// 作为服务端
+// 绑定本地地址
+ChannelFuture future = bootstrap.bind(new InetSocketAddress(8080));
+// 设置绑定成功后的回调
+future.addListener(new ChannelFutureListener() {
+  @Override
+  public void operationComplete(ChannelFuture channelFuture)
+    throws Exception {
+    if (channelFuture.isSuccess()) {
+      System.out.println("Server bound");
+    } else {
+      System.err.println("Bound attempt failed");
+      channelFuture.cause().printStackTrace();
+    }
+  }
+});
+```
+
+- Bootstrap 通常使用 connet( ) 连接到远程的主机和端口，作为一个 Netty TCP 协议通信中的客户端。另外，Bootstrap 也可以通过 bind( ) 绑定本地的一个端口，作为 UDP 协议通信中的一端
+- ServerBootstrap 通常使用 bind( ) 绑定本地的端口上，然后等待客户端的连接
+- Bootstrap 只需要配置一个线程组— EventLoopGroup，而 ServerBootstrap 需要配置两个线程组— EventLoopGroup，一个用于接收连接，一个用于具体的 IO 处理
+
+
+
+#### Channel（网络操作抽象类）
+
+- Channel 接口是 Netty 对网络操作抽象类，通过 Channel 可以进行 I/O 操作
+- 一旦客户端成功连接服务端，就会新建一个 Channel 同该用户端进行绑定
+
+```java
+//  通过 Bootstrap 的 connect 方法连接到服务端
+public Channel doConnect(InetSocketAddress inetSocketAddress) {
+  CompletableFuture<Channel> completableFuture = new CompletableFuture<>();
+  bootstrap.connect(inetSocketAddress).addListener((ChannelFutureListener) future -> {
+    if (future.isSuccess()) {
+      completableFuture.complete(future.channel());
+    } else {
+      throw new IllegalStateException();
+    }
+  });
+  return completableFuture.get();
+}
+```
+
+- 比较常用的 Channel 接口实现类是 ：
+
+  - NioServerSocketChannel（服务端）
+
+  - NioSocketChannel（客户端）
+
+- 这两个 Channel 可以和 BIO 编程模型中的 ServerSocket 以及 Socket 两个概念对应上
+
+
+
+#### EventLoop（事件循环）
+
+- EventLoop 接口是 Netty 中最核心的概念
+- 《Netty 实战》这本书是这样介绍它的：EventLoop 定义了 Netty 的核心抽象，用于处理连接的生命周期中所发生的事件
+- 简单来说，EventLoop 的主要作用
+  - 责监听网络事件并调用事件处理器进行相关 I/O 操作（读写）的处理
+- Channel 为 Netty 网络操作（读写等操作）抽象类，EventLoop 负责处理注册到其上的 Channel 的 I/O 操作，两者配合进行 I/O 操作
+- EventLoopGroup 包含多个 EventLoop（每一个 EventLoop 通常内部包含一个线程），它管理着所有的 EventLoop 的生命周期
+- EventLoop 处理的 I/O 事件都将在它专有的 Thread 上被处理，即 Thread 和 EventLoop 属于 1 : 1 的关系，从而保证线程安全
+
+
+
+#### ChannelHandler（消息处理器） 和 ChannelPipeline（ChannelHandler 对象链表）
+
+- ChannelHandler 是消息的具体处理器，主要负责处理客户端/服务端接收和发送的数据
+- 当 Channel 被创建时，会被自动地分配到它专属的 ChannelPipeline
+- 一个 Channel 包含一个 ChannelPipeline，ChannelPipeline 为 ChannelHandler 的链，一个 pipeline 上可以有多个 ChannelHandler
+- 在 ChannelPipeline 上通过 addLast( ) 添加一个或者多个ChannelHandler，当一个 ChannelHandler 处理完之后就将数据交给下一个 ChannelHandler 
+- 当 ChannelHandler 被添加到的 ChannelPipeline 它得到一个 ChannelHandlerContext，它代表一个 ChannelHandler 和 ChannelPipeline 之间的“绑定”，ChannelPipeline 通过 ChannelHandlerContext 来间接管理 ChannelHandler 
+
+```java
+b.group(eventLoopGroup)
+  .handler(new ChannelInitializer<SocketChannel>() {
+    @Override
+    protected void initChannel(SocketChannel ch) {
+      ch.pipeline().addLast(new NettyKryoDecoder(kryoSerializer, RpcResponse.class));
+      ch.pipeline().addLast(new NettyKryoEncoder(kryoSerializer, RpcRequest.class));
+      ch.pipeline().addLast(new KryoClientHandler());
+    }
+  });
+```
+
+
+
+#### ChannelFuture（操作执行结果）
+
+- Netty 是异步非阻塞的，所有的 I/O 操作都为异步的，因此，不能立刻得到操作是否执行成功
+- 通过 ChannelFuture 接口的  addListener( ) 注册一个 ChannelFutureListener，当操作执行成功或者失败时，监听就会自动触发返回结果
+
+```java
+public interface ChannelFuture extends Future<Void> {
+  Channel channel();
+
+  ChannelFuture addListener(GenericFutureListener<? extends Future<? super Void>> var1);
+  ......
+
+  ChannelFuture sync() throws InterruptedException;
+}
+```
+
+```java
+ChannelFuture f = b.connect(host, port).addListener(future -> {
+  if (future.isSuccess()) {
+    System.out.println("连接成功!");
+  } else {
+    System.err.println("连接失败!");
+  }
+}).sync();
+```
+
+- 通过 ChannelFuture 的 channel( ) 获取连接相关联的 channel 
+
+```java
+Channel channel = f.channel()
+```
+
+- 通过 ChannelFuture 接口的 sync( ) 让异步的操作编程同步的
+
+
+```java
+// bind()是异步的，但是，你可以通过sync()将其变为同步
+ChannelFuture f = b.bind(port).sync();
+```
 
 
 

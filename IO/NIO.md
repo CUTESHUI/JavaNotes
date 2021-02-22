@@ -260,6 +260,60 @@ public final Buffer clear() {
 #### Selector
 
 - Selector 建立在非阻塞的基础之上，常说的多路复用在 Java中指的就是它，用于实现一个线程管理多个 Channel
+- Selector 是一个抽象类，常用方法
+
+```java
+public abstract class Selector implements Closeable {
+  ......
+
+    /**
+     * 得到一个选择器对象
+     */
+    public static Selector open() throws IOException {
+    return SelectorProvider.provider().openSelector();
+  }
+  ......
+
+    /**
+     * 返回所有发生事件的 Channel 对应的 SelectionKey 的集合，通过
+     * SelectionKey 可以找到对应的 Channel
+     */
+    public abstract Set<SelectionKey> selectedKeys();
+  ......
+
+    /**
+     * 返回所有 Channel 对应的 SelectionKey 的集合，通过 SelectionKey
+     * 可以找到对应的 Channel
+     */
+    public abstract Set<SelectionKey> keys();
+  ......
+
+    /**
+     * 监控所有注册的 Channel，当其中的 Channel 有 IO 操作可以进行时，
+     * 将这些 Channel 对应的 SelectionKey 找到。参数用于设置超时时间
+     */
+    public abstract int select(long timeout) throws IOException;
+
+  /**
+    * 无超时时间的 select 过程，一直等待，直到发现有 Channel 可以进行
+    * IO 操作
+    */
+  public abstract int select() throws IOException;
+
+  /**
+    * 立即返回的 select 过程
+    */
+  public abstract int selectNow() throws IOException;
+  ......
+
+  /**
+    * 唤醒 Selector，对无超时时间的 select 过程起作用，终止其等待
+    */
+    public abstract Selector wakeup();
+  ......
+}
+```
+
 - 开启一个 Selector
 
 ```java
@@ -323,19 +377,6 @@ while(true) {
   }
 }
 ```
-
-- 常用方法
-  - select( )
-    - 用此方法，会将上次 select 之后的准备好的 channel 对应的 SelectionKey 复制到 selected set 中
-    - 如果没有任何通道准备好，这个方法会阻塞，直到至少有一个通道准备好
-  - selectNow( )
-    - 功能和 select 一样，区别在于如果没有准备好的通道，那么此方法会立即返回 0。
-  - select(long timeout)
-    - 如果没有通道准备好，此方法会等待一会
-  - wakeup( )
-    - 用来唤醒等待在 select( ) 和 select(timeout) 上的线程的
-    - 如果 wakeup( ) 先被调用，此时没有线程在 select 上阻塞，那么之后的一个 select() 或 select(timeout) 会立即返回，而不会阻塞
-    - 只会作用一次
 
 
 
