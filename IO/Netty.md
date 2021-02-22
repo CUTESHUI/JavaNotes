@@ -1,4 +1,4 @@
-Netty
+## Netty
 
 #### BIO、NIO、AIO区别
 
@@ -555,7 +555,7 @@ future.addListener(new ChannelFutureListener() {
 
 #### Channel（网络操作抽象类）
 
-- Channel 接口是 Netty 对网络操作抽象类，通过 Channel 可以进行 I/O 操作
+- Channel 接口是 Netty 对网络操作抽象类，EventLoop 负责处理注册到其上的 Channel 的 I/O 操作，两者配合进行 I/O 操作
 - 一旦客户端成功连接服务端，就会新建一个 Channel 同该用户端进行绑定
 
 ```java
@@ -585,13 +585,41 @@ public Channel doConnect(InetSocketAddress inetSocketAddress) {
 
 #### EventLoop（事件循环）
 
+- 事件循环正如它的名字，处于一个循环之中，以前在编写网络程序的时候，让处理连接的逻辑 处于一个死循环之中，这样可以不断的处理客户端连接
 - EventLoop 接口是 Netty 中最核心的概念
 - 《Netty 实战》这本书是这样介绍它的：EventLoop 定义了 Netty 的核心抽象，用于处理连接的生命周期中所发生的事件
 - 简单来说，EventLoop 的主要作用
   - 责监听网络事件并调用事件处理器进行相关 I/O 操作（读写）的处理
-- Channel 为 Netty 网络操作（读写等操作）抽象类，EventLoop 负责处理注册到其上的 Channel 的 I/O 操作，两者配合进行 I/O 操作
-- EventLoopGroup 包含多个 EventLoop（每一个 EventLoop 通常内部包含一个线程），它管理着所有的 EventLoop 的生命周期
-- EventLoop 处理的 I/O 事件都将在它专有的 Thread 上被处理，即 Thread 和 EventLoop 属于 1 : 1 的关系，从而保证线程安全
+- Netty 的 EventLoop 采用了两个基本的API：并发和网络
+  - Netty的并发包 io.netty.util.concurrent 是基于 Java 的并发包 java.util.concurrent， 主要用于提供 Executor 的支持
+  - Netty 的 io.netty.channel 包提供了与客户端 Channel 的事件交互的支持
+- 线程模型
+  - 线程模型确定了代码执行的方式，它可能带来一些副作用以及不确定因素， 这是并发编程中最大的难点
+  - 现代操作系统几乎都具有多个核心的 CPU，因此可以使用多线程技术以有效地利用系统资源，在早期的 Java 多线程编程中，使用线程的方式一般都是继承 Thread 或者实现 Runnable 以此创建新的 Thread， 这是一种比较原始且浪费资源的处理线程的方式，JDK5之后引入了 Executor API，其核心思想是使用池化技术 来重用 Thread，以此达到提高线程响应速度和降低资源浪费的目的
+  - EventLoop 线程模型
+    - EventLoop 将有一个永远不会改变的 Thread，Netty 会给 EventLoop 分配一个 Thread，在 EventLoop 生命周期之中的所有 IO 操作和事件都由这个 Thread 执行，即 Thread 和 EventLoop 属于 1 : 1 的关系，从而保证线程安全
+    - 根据配置和 CPU 核心的不同， Netty 可以创建多个 EventLoop，且单个 EventLoop 可能会服务于多个客户端Channel
+    - 事件或任务的执行总是以 FIFO 顺序执行，这样可以保证字节总是按正确的顺序被处理，消除潜在的数据损坏的可能性
+- 任务调度
+  - 有时候需要在指定的时间之后触发任务或者周期性的执行某一个人物，这都需要使用到任务调度
+  - JDK 任务调度
+    - JDK 主要有 Timer 和 ScheduledExecutorService 两种实现任务调度的方式，但是这两种原生的 API 的性能都不太适合高负载应用
+  - EventLoop 任务调度
+    - EventLoop 扩展了 ScheduledExecutorService， 可以通过 EventLoop 来实现任务调度
+    - 使用 Channel 获取其对应的 EventLoop，然后调用 schedule 方法给其分配一个 Runnable 执行
+    - Netty 的任务调度比 JDK 的任务调度性能性能要好，这主要是由于 Netty 底层的线程模型设计的非常优秀
+- 线程管理
+  - Netty 线程模型的卓越性能取决于当前执行任务的 Thread
+  - 如果处理 Chanel 任务的线程正是支撑 EventLoop 的线程，那么与 Channel 的任务会被直接执行，否则 EventLoop 会将该任务放入任务队列之中稍后执行
+  - 每个 EventLoop 都有自己的任务队列，独立于其他 EventLoop 的任务队列
+- 线程分配
+  - 每个 EventLoop 都注册在一个 EventLoopGroup 之中，一个 EventLoopGroup 可以包含多个 EventLoop，根据不同的传输实现， EventLoop 的创建和分配方式也不同
+  - 非阻塞传输
+    - 一个 EventLoop 可以处理多个 Channel，Netty 这样设计的目的就是尽可能的通过少量 Thread 来支撑大量的 Channel， 而不是每个 Channel 都分配一个 Thread
+    - EventLoopGroup 负责为每个新创建的 Channel 分配一个EventLoop，一旦一个 Channel 被分配给 EventLoop，它将在整个生命周期中都使用这个EventLoop 及其 Thread 处理事件和任务
+    - EventLoop 的分配方式对 ThreadLocal 的使用是很有很大影响的，因为注册在一个 EventLoop 上的 Channel 共有这一个线程，那么在这些 Channel 之间使用 ThreadLocal，其 ThreadLocal 的状态都是一样的，无法发挥 ThreadLocal 本来的作用
+- 与 EventLoopGroup 关系
+  - EventLoopGroup 包含多个 EventLoop（每一个 EventLoop 通常内部包含一个线程），它管理着所有的 EventLoop 的生命周期
 
 
 
