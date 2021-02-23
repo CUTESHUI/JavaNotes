@@ -1,7 +1,5 @@
 ## JavaSE易错点
 
-
-
 #### 正确使用 equals 方法
 
 - Object 的 equals 方法容易抛空指针异常，应使用常量或确定有值的对象来调用 equals

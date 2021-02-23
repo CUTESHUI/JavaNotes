@@ -329,8 +329,6 @@ static class NettyClientHandler extends ChannelInboundHandlerAdapter {
 
 
 
-#### Netty 核心组件
-
 ---
 
 #### Bytebuf（字节容器）
@@ -625,11 +623,140 @@ public Channel doConnect(InetSocketAddress inetSocketAddress) {
 
 #### ChannelHandler（消息处理器） 和 ChannelPipeline（ChannelHandler 对象链表）
 
-- ChannelHandler 是消息的具体处理器，主要负责处理客户端/服务端接收和发送的数据
-- 当 Channel 被创建时，会被自动地分配到它专属的 ChannelPipeline
-- 一个 Channel 包含一个 ChannelPipeline，ChannelPipeline 为 ChannelHandler 的链，一个 pipeline 上可以有多个 ChannelHandler
-- 在 ChannelPipeline 上通过 addLast( ) 添加一个或者多个ChannelHandler，当一个 ChannelHandler 处理完之后就将数据交给下一个 ChannelHandler 
-- 当 ChannelHandler 被添加到的 ChannelPipeline 它得到一个 ChannelHandlerContext，它代表一个 ChannelHandler 和 ChannelPipeline 之间的“绑定”，ChannelPipeline 通过 ChannelHandlerContext 来间接管理 ChannelHandler 
+- Channel 
+
+  - Channel 接口的生命周期、状态与 ChannelHandler 是密切相关的，当这些状态发生改变时，将会生成对应的事件，ChannelPipeline 中的ChannelHandler 会及时做出处理
+  - 生命周期、状态
+    - ChannelUnregistered：Channel 没有注册到 EventLoop
+    - ChannelRegistered：Channel 被注册到了 EventLoop
+    - ChannelActive：Channel 已经连接到它的远程节点，处于活动状态，可以收发数据
+    - ChannelInactive：Channel 与远程节点断开不再处于活动状态
+
+- ChannelHandler 
+
+  - 消息的具体处理器，主要负责处理客户端 / 服务端接收和发送的数据
+  - 当 Channel 被创建时，会被自动地分配到它专属的 ChannelPipeline
+  - ChannelHandler接口定义了其生命周期中的操作，当 ChanelHandler 被添加到 ChannelPipeline  或从 ChannelPipeline 中移除时，会调用这些操作
+  - 生命周期、状态
+    - handlerAdded：当把 ChannelHandler 添加到 ChannelPipeline 中时调用此方法
+    - handlerRemoved：当把 ChannelHandler 从 ChannelPipeline 中移除的时候会调用此方法
+    - exceptionCaught：当 ChannelHandler 在处理数据的过程中发生异常时会调用此方法
+
+- ChannelInboundHandler
+
+  - ChannelInboundHandler 接口在接受数据或者其对应的 Channel 状态发生改变时调用其生命周期的方法， ChannelInboundHandler 的生命周期和 Channel 的生命周期其实是密切相关的
+
+  - 实现 ChannelInboundHandler 的 channelRead( ) 时，使用 ReferenceCountUtil 的 release( ) 释放 ByteBuf 可以减少内存的消耗
+
+  - 生命周期、状态
+
+    - ChannelRegistered：当 Channel 被注册到 EventLoop 且能够处理 IO 事件时会调用此方法
+    - ChannelUnregistered：当 Channel 从 EventLoop 注销且无法处理任何IO事件时会调用此方法
+
+    - ChannelActive：当 Channel 已经连接到远程节点或者已绑定本地 address 且处于活动状态时会调用此方法
+
+    - ChannelInactive：当 Channel 与远程节点断开，不再处于活动状态时调用此方法
+    - ChannelReadComplete：当 Channel 的某一个读操作完成时调用此方法
+    - ChannelRead：当 Channel 有数据可读时调用此方法
+    - ChannelWritabilityChanged：当 Channel 的可写状态发生改变时调用此方法，可以调用 Channel 的 isWritable( ) 检测 Channel 的可写性，还可以通过 ChannelConfig 来配置 write 操作相关的属性
+    - userEventTriggered：当 ChannelInboundHandler 的 fireUserEventTriggered( ) 被调用时才调用此方法
+
+- ChannelOutboundHandler
+
+  - 出站数据将由ChannelOutboundHandler处理，它的方法将被 Channel，ChannelPipeline 以及 ChannelHandlerContext 调用
+  - ChannelOutboundHandler 的大部分方法都需要一个 ChannelPromise 类型的参数，ChannelPromise 是 ChannelFuture的 一个子接口，所以 ChannelPromise 的作用和 ChannelFuture 是一样的， 用于在 ChannelOutboundHandler 的操作完成后执行的回调
+  - 主要方法
+    - bind：当 Channel 绑定到本地 address 时会调用此方法
+    - connect：当 Channel 连接到远程节点时会调用此方法
+    - disconnect：当 Channel 和远程节点断开时会调用此方法
+    - close：当关闭 Channel 时会调用此方法
+    - deregister：当 Channel 从它的 EventLoop 注销时会调用此方法
+    - read：当从 Channel 读取数据时会调用此方法
+    - flush：当Channel将数据冲刷到远程节点时调用此方法
+    - write：当通过 Channel 将数据写入到远程节点时调用此方法
+
+- 资源管理
+
+  - 使用 ChannelInboundHandler 的 read 或 ChannelOutboundHandler 的 write 操作时，都需要保证 没有任何资源泄露并尽可能的减少资源耗费， 为了帮助诊断潜在的的资源泄露问题，Netty 提供了 ResourceLeakDetector，它将对 Netty 程序的已分配的缓冲区做大约 1% 的采样用以检测内存泄露
+
+  - Netty 目前定义了4种泄露检测级别
+
+    - Disabled
+      - 禁用泄露检测，应当在详细测试之后才应该使用此级别
+    - SIMPLE
+      - 使用 1% 的默认采样率检测并报告任何发现的泄露，默认
+    - ADVANCED
+      - 使用默认的采样率，报告任何发现的泄露以及对应的消息的位置
+    - PARANOID
+      - 类似于ADVANCED，但是每次都会对消息的访问进行采样，此级别可能会对程序的性能造成影响，应该用于调试阶段
+
+  - 可以通过JVM启动参数来设置leakDetector的级别：
+
+    ```
+    java -Dio.netty.leakDetectionLevel=ADVANCED
+    ```
+
+- ChannelPipeline
+
+  - ChannelPipeline 是一系列 ChannelHandler 组成的拦截链，每一个新创建的 Channel 都会被分配一个新的 ChannelPipeline，Channel 和 ChannelPipeline 之间的关联是持久的
+
+  - 一个 Channel 包含一个 ChannelPipeline，一个 ChannelPipeline 上可以有多个 ChannelHandler
+
+  - 在 ChannelPipeline 上通过 addLast( ) 添加一个或者多个ChannelHandler，当一个 ChannelHandler 处理完之后就将数据交给下一个 ChannelHandler 
+
+  - 当 ChannelHandler 被添加到的 ChannelPipeline 它得到一个 ChannelHandlerContext，它代表一个 ChannelHandler 和 ChannelPipeline 之间的“绑定”，ChannelPipeline 通过 ChannelHandlerContext 来间接管理 ChannelHandler 
+
+  - ChannelPipeline 持久论
+
+    - Netty 将 ChannelPipeline 的入站口作为头部，出站口作为尾部
+    - 一个入站事件将从 ChannelPipeline 的头部（左侧）向尾部（右侧）开始传播，出站事件的传播则是与入站的传播方向相反
+    - 当 ChannelPipeline 在 ChannelHandler 之间传播事件的时候，它会判断下一个 ChannelHandler 的类型 是否与当前 ChannelHandler 的类型相同，如果相同则说明它们是一个方向的事件， 如果不同则跳过该 ChannelHandler 并前进到下一个 ChannelHandler，直到它找到相同类型的ChannelHandler
+
+  - ChannelPipeline 的 API 不仅有对 ChannelHandler 的增删改操作，还有对入站和出站操作的附加方法
+
+  - ChannelPipeline 的入站方法
+
+    - fireChannelRegistered：调用 ChannelPipeline 中下一个 ChannelInboundHandler的channelRegistered 方法
+    - fireChannelUnregistered：调用 ChannelPipeline 中下一个 ChannelInboundHandler的channelUnregistered 方法
+
+    - fireChannelActive：调用 ChannelPipeline 中下一个 ChannelInboundHandler的channelActive 方法
+
+    - fireChannelInactive：调用 ChannelPipeline 中下一个 ChannelInboundHandler的channelInactive 方法
+    - fireExceptionCaught：调用 ChannelPipeline 中下一个 ChannelInboundHandler的exceptionCaught 方法
+    - fireUserEventTriggered：调用 ChannelPipeline 中下一个 ChannelInboundHandler的userEventTriggered 方法
+    - fireChannelRead：调用 ChannelPipeline 中下一个 ChannelInboundHandler的channelRead 方法
+    - fireChannelReadComplete：调用 ChannelPipeline 中下一个 ChannelInboundHandler的channelReadComplete 方法
+    - fireChannelWritabilityChanged：调用 ChannelPipeline 中下一个 ChannelInboundHandler的channelWritabilityChanged 方法
+
+  - ChannelPipeline 的出站方法
+
+    - bind：调用 ChannelPipeline 中下一个 ChannelOutboundHandler 的 bind( )，将 Channel 与本地地址绑定
+    - connect：调用 ChannelPipeline 中下一个 ChannelOutboundHandler 的 connec( )，将 Channel 连接到远程节点
+    - disconnect：调用ChannelPipeline 中下一个 ChannelOutboundHandler 的 disconnect( )，将 Channel 与远程连接断开
+    - close：调用ChannelPipeline 中下一个 ChannelOutboundHandler 的 close( )，将 Channel 关闭
+    - deregister：调用ChannelPipeline 中下一个 ChannelOutboundHandler 的 deregister( )，将 Channel 从其对应的 EventLoop 注销
+    - flush：调用ChannelPipeline 中下一个 ChannelOutboundHandler 的 flush( )，将 Channel 的数据冲刷到远程节点
+    - write：调用ChannelPipeline 中下一个 ChannelOutboundHandler 的 write( )，将数据写入 Channel
+    - writeAndFlush：先调用 write 方法，然后调用 flush( )，将数据写入并刷回远程节点
+    - read：调用 ChannelPipeline 中下一个 ChannelOutboundHandler 的 read 方法，从 Channel 中读取数据
+
+- ChannelHandlerContext
+
+  - 是 ChannelHandler 和 ChannelPipeline 之间的关联，每当有 ChannelHandler 添加到 ChannelPipeline 中时，都会创建 ChannelHandlerContext
+  - 主要作用是管理它所关联的 ChannelHandler 与同一个 ChannelPipeline 中的其他 ChannelHandler 之间的交互
+  - 大部分方法和 Channel 和 ChannelPipeline 相似
+    - 有一个重要的区别
+      - 调用 Channel 或 ChannelPipeline 的方法，其影响是会沿着整个 ChannelPipeline 进行传播
+      - 调用 ChannelHandlerContext 的方法，则是从其关联的 ChannelHandler 开始，并且只会传播给位于该 ChannelPipeline 中的下一个能够处理该事件的 ChannelHandler
+  - 重要方法
+    - alloc：获取与当前 ChannelHandlerContext 所关联的 Channel 的 ByteBufAllocator
+    - handler：返回与当前 ChannelHandlerContext 绑定的 ChannelHandler
+    - pipeline：返回与当前 ChannelHandlerContext 关联的 ChannelPipeline
+  - 高级用法
+    - 有时候需要在多个 ChannelPipeline 之间共享一个 ChannelHandler，以此实现跨管道处理（获取）数据 的功能，此时的 ChannelHandler 属于多个 ChannelPipeline，且会绑定到不同的 ChannelHandlerContext 上。
+    - 在多个 ChannelPipeline 之间共享 ChannelHandler 需要使用 @Sharable，代表它是一个共享的 ChannelHandler
+    - 如果一个 ChannelHandler 没有使用 @Sharable 却被用于多个 ChannelPipeline，那么将会触发异常
+    - 一个 ChannelHandler 被用于多个 ChannelPipeline 肯定涉及到多线程 数据共享的问题，因此需要保证 ChannelHandler 的方法同步
 
 ```java
 b.group(eventLoopGroup)
@@ -687,3 +814,99 @@ ChannelFuture f = b.bind(port).sync();
 
 
 
+#### 编码器与解码器
+
+- 从网络传输的角度来讲，数组总是以字节的格式在网络之中进行传输的
+
+- 每当源主机发送数据到目标主机时，数据会从本地格式被转换成字节进行传输，这种转换被称为编码，编码的逻辑由编码器处理
+
+- 每当目标主机接受来自源主机的数据时，数据会从字节转换为需要的格式，这种转换被称为解码，解码的逻辑由解码器处理
+
+- 在 Netty 中，编码解码器实际上是 ChannelOutboundHandler 和 ChannelInboundHandler 的实现， 因为编码和解码都属于对数据的处理，所以，编码解码器被设计为 ChannelHandler
+
+- 编码器
+
+  - 在Netty中，编码器是 ChannelOutboundHandler 的实现，即处理出站数据
+  - 分为两种
+    - 将消息编码为字节： MessageToByteEncoder
+    - 将消息编码为消息： MessageToMessageEncoder
+  - MessageToByteEncoder
+    - 用于将消息编码为字节，如果需要自定编码器，就需要继承它并实现它的 encode( )
+    - encode( ) 是自定义编码器必须实现的方法，它被调用时会传入相应的数据和一个存储数据的 ByteBuf
+    - 在 encode 被调用之后，该 ByteBuf 会被传递给 ChannelPipeline 中下一个 ChannelOutboundHandler
+    - 编程模型
+
+  ```java
+  // 扩展MessageToByteEncoder
+  public class ShortToByteEncoder extends MessageToByteEncoder<Short>{  
+   
+    @Override
+    public void encode(ChannelHandlerContext ctx , Short data, ByteBuf out) throws Exception {
+      out.writeShort(data);//将data写入ByteBuf   
+    }
+  }
+  ```
+
+  - MessageToMessageEncoder
+    - 用于将一种类型的消息编码另一种类型的消息，其原型和 MessageToMessageDecoder 相似
+
+- 解码器
+
+  - 在 Netty 中，解码器是 ChannelInboundHandler 的实现，即处理入站数据
+  - 分为两种
+    - 将字节解码为 Message 消息： ByteToMessageDecoder、ReplayingDecoder
+    - 将一种消息解码为另一种消息： MessageToMessageDecoder
+  - ByteToMessageDecoder
+    - 用于将字节解码为消息，如果想自定义解码器，就需要继承这个类并实现 decode( )
+    - decode( ) 是自定解码器必须实现的方法，它被调用时会传入一个包含了数据的 ByteBuf 和一个用来添加解码消息的 List，对 decode( ) 的调用会重复进行，直至确认没有新元素被添加到该 List 或 ByteBuf 没有可读字节为止，如果 List 不为空， 那么它的内容会被传递给 ChannelPipeline 中的下一个 ChannelInboundHandler
+    - 编程模型
+
+  ```java
+  // 扩展ByteToMessageDecoder
+  public class ToIntegerDecoder extends ByteToMessageDecoder {  
+  
+    @Override
+    public void decode(ChannelHandlerContext ctx, ByteBuf in, List<Object> out) throws Exception {
+      //检查ByteBuf是否仍有4个字节可读
+      if (in.readableBytes() >= 4) {  
+        out.add(in.readInt());  //从ByteBuf读取消息到List中
+      }
+    }
+  }
+  ```
+
+  - ReplayingDecoder
+    - ReplayingDecoder 扩展了 ByteToMessageDecoder，这使得不再需要检查 ByteBuf，因为 ReplayingDecoder 自定义了 ByteBuf 的实现 ReplayingDecoderByteBuf，这个包装后的 ByteBuf 在内部会自动检查是否可读
+    - 虽然 ReplayingDecoderByteBuf 可以自动检查可读性，但是对于某些操作并不支持，会抛出 UnsupportedOperationException 异常
+    - 编程模型
+
+  ```java
+  // 扩展ReplayingDecoder
+  public class ToIntegerDecoder2 extends ReplayingDecoder<Void> {
+    
+    @Override
+    public void decode(ChannelHandlerContext ctx, ByteBuf in, List<Object> out) throws Exception {
+      out.add(in.readInt());//从ByteBuf读取消息到List中
+    }
+  }
+  ```
+
+  - MessageToMessageDecoder
+
+    - MessageToMessageDecoder 用于将一种类型的消息解码另一种类型的消息，如从 DTO 转为 POJO
+
+    - 编程模型
+
+  ```java
+  public class IntegerToStringDecoder extends MessageToMessageDecoder<Integer> {
+  
+    @Override
+    public void decode(ChannelHandlerContext ctx, Integer msg, List<Object> out) throws Exception{
+      out.add(String.valueOf(msg));
+    }
+  }
+  ```
+
+- 编解码器
+  - Netty 还提供了集编码与解码 于一身的编解码器 ByteToMessageCodec 和 MessageToMessageCodec，同时实现了 ChannelInboundHandler 和 ChannelOutboundHandler
+  - 虽然使用编码解码器可以同时编码和解码数据，但这样不利于代码的可重用性。 相反，单独的编码器和解码器最大化了代码的可重用性和可扩展性，所以应该优先考虑分开使用二者

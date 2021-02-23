@@ -189,9 +189,7 @@
   - 字节流操作字节，比如：.mp3，.avi，.rmvb，mp4，.jpg，.doc，.ppt
   - 字符流操作字符，操作普通文本文件。最常见的文本文件：.txt，.java，.c，.cpp 等语言的源代码
 
-
-
-- **缓冲流**
+- 缓冲流
 
   - 处理流的一种
   
@@ -208,13 +206,10 @@
   - flush ( )的使用：手动将buffer中内容写入文件
   - 如果是带缓冲区的流对象的 close( )，不但会关闭流，还会在关闭流之前刷新缓冲区，关闭后不能再写出
 
-
-
-- **转换流**
-- 处理流的一种
-  
-  - 属于 字符流
-- 转换流提供了在字节流和字符流之间的转换
+- 转换流
+  - 处理流的一种
+  - 属于字符流
+  - 转换流提供了在字节流和字符流之间的转换
   - Java API 提供了两个转换流
 
     1. InputStreamReader：将 InputStream —> Reader
@@ -224,19 +219,15 @@
        - 构造器
 
          - public InputStreamReader (InputStream in)
-
-         - public InputSreamReader (InputStream in, String charsetName)
-       - 如： Reader isr = new InputStreamReader (System.in, ”gbk”);
-  
-  2. OutputStreamWriter：将 Writer —> OutputStream
+    - public InputSreamReader (InputStream in, String charsetName)
+    2. OutputStreamWriter：将 Writer —> OutputStream
        - 需要和OutputStream“套接”
        - 构造器 
        - public OutputStreamWriter (OutputStream out)
          - public OutputSreamWriter (OutputStream out, String charsetName)
+
   - 字节流中的数据都是字符时，转成字符流操作更高效
   - 很多时候我们使用转换流来处理文件乱码问题。实现编码和解码的功能
-
-
 
 - 打印流
 
@@ -275,9 +266,7 @@
   - 将上述的方法的 read 改为相应的 write 即可
   - 读取不同数据类型时，读的顺序和之前写的顺序保持一致
 
-
-
-- **对象流**
+- 对象流
 
   - 用于存储和读取基本数据类型数据或 对象的处理流
 
@@ -340,8 +329,6 @@
 
     - 强调：如果某个类的属性不是基本数据类型或 String 类型，而是另一个引用类型，那么这个引用类型必须是可序列化的，否则拥有该类型的 Field 的类也不能序列化
 
-
-
 - 随机存取文件流
   - RandomAccessFile 声明在java.io包下，但直接继承于java.lang.Object类
   - 实现了DataInput、DataOutput这两个接口，也就意味着这个类可以读、可以写
@@ -363,8 +350,6 @@
   - 如果模式为 r。不会创建文件，而是会去读取一个已经存在的文件，如果读取的文件不存在则会出现异常
   -  如果模式为 rw。如果文件不存在则会去创建文件，如果存在则不会创建
   - 我们可以用RandomAccessFile这个类，来实现一个多线程断点下载的功能，用过下载工具的朋友们都知道，下载前都会建立两个临时文件，一个是与被下载文件大小相同的空文件，另一个是记录文件指针的位置文件，每次暂停的时候，都会保存上一次的指针，然后断点下载的时候，会继续从上一次的地方下载，从而实现断点下载或上传的功能
-
-
 
 - 字符集
 
@@ -402,17 +387,6 @@
   - ServerSocketChannel：TCP网络编程的服务器端的Channel
   - DatagramChannel：UDP网络编程中发送端和接收端的Channel
 
-- 同时，NIO.2在java.nio.file包下还提供了Files、Paths工具类，Files包含
-
-  了大量静态的工具方法来操作文件；Paths则包含了两个返回Path的静态
-
-  工厂方法。
-
-   Paths 类提供的静态 get() 方法用来获取 Path 对象：
-
-  static Path get(String first, String … more) : 用于将多个字符串串连成路径
-
-  static Path get(URI uri): 返回指定uri对应的Path路径
 
 
 
@@ -562,7 +536,7 @@
   - 可以广播发送
   - 发送数据结束时无需释放资源，开销小，速度快
 
-- Socket
+- Socket、套接字
 
   - 利用套接字 / Socket 开发网络应用程序早已被广泛的采用，以至于成为事实上的标准 
 

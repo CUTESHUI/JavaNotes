@@ -54,7 +54,7 @@
 
 #### 获取数据库连接
 
-- 要素一：**Driver接口实现类**
+- 要素一：Driver接口实现类
 
   - Driver接口介绍
     - java.sql.Driver 接口是所有 JDBC 驱动程序需要实现的接口
@@ -72,7 +72,7 @@
     
   - 通常不用显式调用 DriverManager 类的 registerDriver() 方法来注册驱动程序类的实例，因为   Driver 接口的驱动程序类都包含了静态代码块，在这个静态代码块中，会调用 DriverManager.registerDriver() 方法来注册自身的一个实例
 
-- 要素二：**URL**
+- 要素二：URL
   - JDBC URL 用于标识一个被注册的驱动程序，驱动程序管理器通过这个 URL 选择正确的驱动程序，从而建立到数据库的连接
   - JDBC URL的标准由三部分组成，各部分间用冒号分隔
     - jdbc:子协议：子名称
@@ -92,8 +92,7 @@
        - jdbc:sqlserver://主机名称:sqlserver服务端口号:DatabaseName=数据库名称
      - jdbc:sqlserver://localhost:1433:DatabaseName=atguigu
   
-
-  - 要素三：**用户名和密码**
+- 要素三：用户名和密码
     - user、password可以用“属性名=属性值”方式告诉数据库
     - 可以调用 DriverManager 类的 getConnection ( ) 方法建立到数据库的连接
 
@@ -733,11 +732,9 @@ public void testInsert2() throws Exception{
      - 一个事务内部的操作及使用的数据，对并发的其他事务，是隔离的
      - 并发执行的各个事务之间不能互相干扰
   
-4. 持久性 / Durability
+  4. 持久性 / Durability
      - 持久性是指一个事务一旦被提交，对数据库中数据的改变就是永久性
      - 接下来的其他操作和数据库故障不应该对其有任何影响
-       
-
 
 - 数据库的并发问题
     - 对于同时运行的多个事务，当这些事务访问数据库中相同的数据时，如果没有采取必要的隔离机制，就会导致各种并发问题
