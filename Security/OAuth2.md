@@ -3,7 +3,7 @@
 #### 简介
 
 - 一个行业的标准授权协议，主要用来授权第三方应用获取有限的权限
-- OAuth 2.0是对 OAuth 1.0 的完全重新设计，OAuth 2.0更快，更容易实现，OAuth 1.0 已经被废弃
+- OAuth 2.0 是对 OAuth 1.0 的完全重新设计，OAuth 2.0 更快，更容易实现，OAuth 1.0 已经被废弃
 - 最终目的是为第三方应用颁发一个有时效性的令牌 token，使得第三方应用能够通过该令牌获取相关的资源
 
 
@@ -28,7 +28,7 @@
     - response_type：要求返回授权码（code）
     - client_id：让 B 知道是谁在请求
     - redirect_uri： B 接受或拒绝请求后的跳转网址
-  - scope：要求的授权范围（这里是只读）
+    - scope：要求的授权范围（这里是只读）
   
   ```
   https://b.com/oauth/authorize?
@@ -36,46 +36,10 @@
     client_id=CLIENT_ID&
     redirect_uri=CALLBACK_URL&
     scope=read
-```
-  
-- 用户跳转后，B 网站会要求用户登录，然后询问是否同意给予 A 网站授权，用户表示同意，这时 B 网站就会跳回 redirect_uri 参数指定的网址，跳转时，会传回一个授权码
-  
   ```
-  https://a.com/callback?code=AUTHORIZATION_CODE
-```
   
-  - A 网站拿到授权码以后，就可以在后端，向 B 网站请求令牌
-    - 参数
-    - client_id、client_secret：让 B 确认 A 的身份（client_secret 参数是保密的，因此只能在后端发请求）
-    - grant_type：值是 AUTHORIZATION_CODE，表示采用的授权方式是授权码
-  - code：是上一步拿到的授权码
-    - redirect_uri：令牌颁发后的回调网址
-  
-  ```
-  https://b.com/oauth/token?
-    client_id=CLIENT_ID&
-    client_secret=CLIENT_SECRET&
-    grant_type=authorization_code&
-    code=AUTHORIZATION_CODE&
-  redirect_uri=CALLBACK_URL
-  ```
+  - 用户跳转后，B 网站会要求用户登录，然后询问是否同意给予 A 网站授权，用户表示同意，这时 B 网站就会跳回 redirect_uri 参数指定的网址，跳转时，会传回一个授权码
 
-  - B 网站收到请求以后，就会颁发令牌。具体做法是向 redirect_uri 指定的网址，发送一段 JSON 数据
-    - 参数
-    - access_token：令牌，A 网站在后端拿到了
-  
-  ```json
-  {    
-    "access_token":"ACCESS_TOKEN",
-    "token_type":"bearer",
-    "expires_in":2592000,
-    "refresh_token":"REFRESH_TOKEN",
-    "scope":"read",
-  "uid":100101,
-    "info":{...}
-  }
-  ```
-  
 
 
 

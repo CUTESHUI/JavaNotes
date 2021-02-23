@@ -910,3 +910,60 @@ ChannelFuture f = b.bind(port).sync();
 - 编解码器
   - Netty 还提供了集编码与解码 于一身的编解码器 ByteToMessageCodec 和 MessageToMessageCodec，同时实现了 ChannelInboundHandler 和 ChannelOutboundHandler
   - 虽然使用编码解码器可以同时编码和解码数据，但这样不利于代码的可重用性。 相反，单独的编码器和解码器最大化了代码的可重用性和可扩展性，所以应该优先考虑分开使用二者
+
+
+
+### Netty 长连接、心跳机制
+
+- TCP 长连接和短连接
+  - TCP 在进行读写之前，server 与 client 之间必须提前建立一个连接，建立连接需要三次握手，释放 / 关闭连接需要四次挥手，这两个过程是比较消耗网络资源并且有时间延迟的
+  - 短连接
+    - server 端 与 client 端建立连接之后，读写完成之后就关闭掉连接，如果下一次再要互相发送消息，就要重新连接
+    - 优点：管理和实现都比较简单
+    - 缺点：每一次的读写都要建立连接必然会带来大量网络资源的消耗，并且连接的建立也需要耗费时间
+  - 长连接
+    - client 向 server 双方建立连接之后，client 与 server 完成一次读写，它们之间的连接并不会主动关闭，后续的读写操作会继续使用这个连接
+    - 优点：可以省去较多的 TCP 建立和关闭的操作，降低对网络资源的依赖，节约时间
+    - 对于频繁请求资源的客户来说，非常适用长连接
+- 心跳机制
+  - 在 TCP 保持长连接的过程中，可能会出现断网等网络异常出现，异常发生的时候， client 与 server 之间如果没有交互的话，它们是无法发现对方已经掉线的。为了解决这个问题, 就需要引入心跳机制
+  - 工作原理
+    - 在 client 与 server 之间在一定时间内没有数据交互时，即处于 idle 状态时，客户端或服务器就会发送一个特殊的数据包给对方
+    - 当接收方收到这个数据报文后，也立即发送一个特殊的数据报文，回应发送方，此即一个 PING-PONG 交互
+    - 当某一端收到心跳消息后，就知道了对方仍然在线，这就确保 TCP 连接的有效性
+  - TCP 实际上自带的就有长连接选项，本身是也有心跳包机制，也就是 TCP 的选项：SO_KEEPALIVE。但是，TCP 协议层面的长连接灵活性不够
+  - 一般情况下都是在应用层协议上实现自定义心跳机制的，也就是在 Netty 层面通过编码实现。通过 Netty 实现心跳机制的话，核心类是 IdleStateHandler
+
+
+
+#### Netty 零拷贝
+
+- 零复制（英语：Zero-copy；也译零拷贝）
+  - 计算机执行操作时，CPU 不需要先将数据从某处内存复制到另一个特定区域，这种技术通常用于通过网络传输文件时节省 CPU 周期和内存带宽
+  - 在 OS 层面上的 Zero-copy 通常指避免在用户态（User-space）与内核态（Kernel-space）之间来回拷贝数据
+  - 在 Netty 层面 ，零拷贝主要体现在对于数据操作的优化
+- Netty 零拷贝
+  - 使用 Netty 提供的 CompositeByteBuf 类, 可以将多个 ByteBuf 合并为一个逻辑上的 ByteBuf，避免了各个 ByteBuf 之间的拷贝
+  - ByteBuf 支持 slice 操作, 因此可以将 ByteBuf 分解为多个共享同一个存储区域的 ByteBuf，避免了内存的拷贝
+  - 通过 FileRegion 包装的 FileChannel.tranferTo 实现文件传输，可以直接将文件缓冲区的数据发送到目标 Channel，避免了传统通过循环 write 方式导致的内存拷贝问题
+
+
+
+####  TCP 粘包 / 拆包
+
+- TCP 粘包 / 拆包 就是你基于 TCP 发送数据的时候，出现了多个字符串“粘”在了一起或者一个字符串被“拆”开的问题
+- 使用 Netty 自带的解码器
+  - LineBasedFrameDecoder
+    - 发送端发送数据包的时候，每个数据包之间以换行符作为分隔
+    - LineBasedFrameDecoder 的工作原理是它依次遍历 ByteBuf 中的可读字节，判断是否有换行符，然后进行相应的截取
+  - DelimiterBasedFrameDecoder
+    - 可以自定义分隔符解码器
+    - LineBasedFrameDecoder 实际上是一种特殊的 DelimiterBasedFrameDecoder 解码器
+  - FixedLengthFrameDecoder
+    - 固定长度解码器，它能够按照指定的长度对消息进行相应的拆包
+  - LengthFieldBasedFrameDecoder
+- 自定义序列化编解码器
+  - 在 Java 中自带的有实现 Serializable 接口来实现序列化，但由于它性能、安全性等原因一般情况下是不会被使用到的
+  - 通常情况下，我们使用 Protostuff、Hessian2、json 序列方式比较多，另外还有一些序列化性能非常好的序列化方式也是很好的选择
+    - 专门针对 Java 语言的：Kryo，FST 等
+    - 跨语言的：Protostuff（基于 protobuf 发展而来），ProtoBuf，Thrift，Avro，MsgPack 等

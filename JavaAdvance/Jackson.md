@@ -19,7 +19,7 @@
 #### ObjectMapper
 
 - Jackson 最常用的 API 就是基于”对象绑定” 的 ObjectMapper
-- ObjectMapper 通过 **writeValue** 的系列方法将 Java 对象序列化为 JSON，并且可以存储成不同的格式
+- ObjectMapper 通过 writeValue 的系列方法将 Java 对象序列化为 JSON，并且可以存储成不同的格式
   - writeValueAsString(Object value)：将对象存储成字符串
   - writeValueAsBytes(Object value)：将对象存储成字节数组
   - writeValue(File resultFile, Object value)：将对象存储成文件
@@ -64,9 +64,9 @@ class Writer{
   - getter( ) 用于序列化，setter( ) 用于反序列化
   - 如果字段只有 public 的 setter( ) ，而无 public 的 getter( ) ，则该字段只能用于反序列化
 
-- 如果想更改默认的序列化和反序列化规则，需要调用 ObjectMapper 的 setVisibility( )。否则将会抛出 InvalidDefinitionException 异常
+- 如果想更改默认的序列化和反序列化规则，需要调用 ObjectMapper 的 setVisibility( )，否则将会抛出 InvalidDefinitionException 异常
 
-- ObjectMapper 通过 **readValue** 的系列方法从不同的数据源将 JSON 反序列化为 Java 对象。
+- ObjectMapper 通过 readValue 的系列方法从不同的数据源将 JSON 反序列化为 Java 对象。
   - readValue(String content, Class<T> valueType)：将字符串反序列化为 Java 对象
   - readValue(byte[] src, Class<T> valueType)：将字节数组反序列化为 Java 对象
   - readValue(File src, Class<T> valueType)：将文件反序列化为 Java 对象
@@ -159,7 +159,7 @@ Writer{name='tom', age=18}
     "age" : 18,
     "birthday" : "2020年11月26日 上午11:09:51"
   }
-  ```
+```
 
 
 
@@ -191,7 +191,7 @@ class Writer{
 #### 自定义序列化和反序列化
 
 - 当 Jackson 默认序列化和反序列化不能满足实际的开发需要时，可以自定义新的序列化和反序列化类
-- 自定义的序列化类需要继承 StdSerializer，同时重写 `serialize()` 方法，利用 JsonGenerator 生成 JSON
+- 自定义的序列化类需要继承 StdSerializer，同时重写 serialize( )，利用 JsonGenerator 生成 JSON
 - 定义好自定义序列化类后，要想在程序中调用它们，需要将其注册到 ObjectMapper 的 Module 中
 - 例子
 

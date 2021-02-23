@@ -522,16 +522,16 @@ public void testAllEq() {
 
 #### 比较操作
 
-- eq： 相当于 `=`
-- ne： 相当于 `!=`
-- gt： 相当于 `>`
-- ge： 相当于`>=`
-- lt：  相当于 `<`
-- le：  相当于`<=`
-- between：  相当于`between ... and ...`
-- notBetween：  相当于`not between ... and ...`
-- in：  相当于`in(.., .., ..)`
-- notIn：  相当于`not in(.., .., ..)`
+- eq： 相当于 =
+- ne： 相当于 !=
+- gt： 相当于 >
+- ge： 相当于 >=
+- lt：  相当于 <
+- le：  相当于 <=
+- between：  相当于 between ... and ...
+- notBetween：  相当于 not between ... and ...
+- in：  相当于 in(.., .., ..)
+- notIn：  相当于 not in(.., .., ..)
 
 
 
