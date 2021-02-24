@@ -39,6 +39,29 @@
   ```
   
   - 用户跳转后，B 网站会要求用户登录，然后询问是否同意给予 A 网站授权，用户表示同意，这时 B 网站就会跳回 redirect_uri 参数指定的网址，跳转时，会传回一个授权码
+    - code：授权码
+  
+  ```
+  https://a.com/callback?code=AUTHORIZATION_CODE
+  ```
+  
+  - A 网站拿到授权码以后，就可以在后端，向 B 网站请求令牌
+    - client_id：让 B 确认 A 的身份
+    - client_secret：保密的，只能由后端发送
+    - grant_type=authorization_code：采用的授权方式是授权码
+    - code：授权码
+    -  redirect_uri：令牌颁发后的回调网址
+  
+  ```
+  https://b.com/oauth/token?
+   client_id=CLIENT_ID&
+   client_secret=CLIENT_SECRET&
+   grant_type=authorization_code&
+   code=AUTHORIZATION_CODE&
+   redirect_uri=CALLBACK_URL
+  ```
+  
+  
 
 
 
