@@ -9,7 +9,7 @@
 
 
 
-### -i/--include
+### -i / --include
 
 - 输出时包括 response 头信息
 - 例子
@@ -20,7 +20,7 @@ curl -i https://www.baidu.com
 
 
 
-### -I/--head
+### -I / --head
 
 - 输出时只显示请求头信息
 - 例子
@@ -31,7 +31,7 @@ curl -I https://www.baidu.com
 
 
 
-#### -X/--request <command> 参数
+#### -X / --request <command> 参数
 
 - 指定什么命令，如  GET、POST
 - 例子
@@ -44,7 +44,7 @@ curl -X PUT -d "name=shui&age=18" http://localhost:8080/uodate
 
 
 
-#### -d/--data <data> 参数
+#### -d / --data <data> 参数
 
 - 使用 POST 方式向服务器发送数据，因此在使用 -d 的时候，可以省略  -X POST
 - 使用 -d 时，将使用  Content-type:application/x-www-form-urlencoded 方式发送数据
@@ -63,7 +63,7 @@ curl -H "Content-Type:application/json" -X POST --data '{"name": "shui", "age": 
 
 
 
-#### -H/--header <line>  参数
+#### -H / --header <line>  参数
 
 - 自定义头信息传递给服务器
 - 例子
@@ -85,7 +85,7 @@ curl -d "name=zhangsan&password=123" http://localhost:8080/login -c ./cookie
 
 
 
-#### -b/--cookie <name=string/file> 参数
+#### -b / --cookie <name=string/file> 参数
 
 - cookie 字符串或文件读取位置
 - 例子
@@ -100,7 +100,7 @@ curl --cookie "name=zhangsan" http://localhost:8080/login
 
 
 
-#### -F/--form <name=content>/--form-string <name=string> 参数
+#### -F / --form <name=content>/--form-string <name=string> 参数
 
 - 模拟 http 表单提交数据，curl 可以通过`-F`命令来以`Content-Type:multipart/form-data`的形式向 server post 数据，该命令允许提交二进制文件等。可以使用`@`前缀来制定提交的内容为一个文件，也可以使用 < 来提交文件中的内容
 - 例子
@@ -112,7 +112,7 @@ curl -F prefile=@portrait.jpg https://example.com/upload
 
 
 
-#### -O/--remote-name
+#### -O / --remote-name
 
 - 把输出写到该文件中，保留远程文件的文件名
 - 例子
@@ -121,9 +121,9 @@ curl -F prefile=@portrait.jpg https://example.com/upload
 curl http://man.linuxde.net/text.iso --silent -O
 ```
 
+ 
 
-
-#### -o/--output
+#### -o / --output
 
 - 把输出写到指定文件中，默认输出地址为当前所在地址
 - 例子
@@ -136,7 +136,7 @@ curl http://man.linuxde.net/test.iso -o filename.iso --progress
 
 
 
-#### -s/--silent
+#### -s / --silent
 
 - 静默模式，不输出任何东西。
 - 例子
