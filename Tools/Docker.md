@@ -116,3 +116,87 @@
 
 
 
+#### 例子
+
+```
+docker run -d --name prometheus \
+-p 9090:9090  \
+-v ~/docker/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml \
+prom/prometheus
+```
+
+```
+docker run -d --name mysql \
+-p 3306:3306 \
+-v ~/docker/mysql5.7/config/mysqld.cnf:/etc/mysql/mysql.conf.d/mysqld.cnf \
+-v ~/docker/mysql5.7/data/mysql:/var/lib/mysql \
+-e MYSQL_ROOT_PASSWORD=123456 \
+mysql:5.7
+```
+
+```
+docker run -d --name nginx \
+-p 80:80 \
+-v ~/docker/nginx/nginx.conf:/etc/nginx/nginx.conf \
+-v ~/docker/nginx/conf.d:/etc/nginx/conf.d \
+-v ~/docker/nginx/logs:/var/log/nginx \
+nginx
+```
+
+```
+docker run -itd --name redis-test \
+-p 6379:6379 \
+redis
+ 
+ docker exec -it redis-test /bin/bash
+ redis-cli
+```
+
+```
+docker run -d --name postgres12.1 -p 5432:5432 \
+-v ~/docker/postgres:/var/lib/postgresql/data \
+-e POSTGRES_PASSWORD=chimanloo1004 \
+postgres:12.1
+
+默认用户名postgres
+docker exec -it postgres12.1 /bin/bash
+su postgres 										# 切换用户
+createuser  -p -s -e username 	# 创建用户
+psql -U username 								# 连接数据库
+```
+
+```
+docker run -d --name=es7 \
+-p 9200:9200 -p 9300:9300 \
+-e "discovery.type=single-node" elasticsearch:7.5.1
+docker cp es7:/usr/share/elasticsearch/data ~/docker/elasticsearch/
+docker cp es7:/usr/share/elasticsearch/logs ~/docker/elasticsearch/
+docker rm -f es7
+
+docker run -d --name=es7 \
+-p 9200:9200 -p 9300:9300 \
+-e "discovery.type=single-node" \
+-v ~/docker/elasticsearch/data:/usr/share/elasticsearch/data \
+-v ~/docker/elasticsearch/logs:/usr/share/elasticsearch/logs \
+elasticsearch:7.5.1
+```
+
+```
+docker run --name oap -d \
+-e TZ=Asia/Shanghai \
+-p 12800:12800 \
+-p 11800:11800 \
+--link es7:es7 \
+-e SW_STORAGE=elasticsearch7 \
+-e SW_STORAGE_ES_CLUSTER_NODES=es7:9200 \
+apache/skywalking-oap-server:8.3.0-es7
+
+
+docker run -d --name skywalking-ui \
+-e TZ=Asia/Shanghai \
+-p 8088:8080 \
+--link oap:oap \
+-e SW_OAP_ADDRESS=oap:12800 \
+apache/skywalking-ui:8.3.0
+```
+
