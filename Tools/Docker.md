@@ -144,7 +144,7 @@ nginx
 ```
 
 ```
-docker run -itd --name redis-test \
+docker run -itd --name redis \
 -p 6379:6379 \
 redis
  
@@ -198,5 +198,37 @@ docker run -d --name skywalking-ui \
 --link oap:oap \
 -e SW_OAP_ADDRESS=oap:12800 \
 apache/skywalking-ui:8.3.0
+
+-javaagent:/Users/mac/docker/skywalking/apache-skywalking-apm-bin-es7/agent/skywalking-agent.jar
+-Dskywalking.agent.service_name=CommonDemo
+-Dskywalking.collector.backend_service=127.0.0.1:11800
+```
+
+```
+docker run -d --name sentinel-dashboard \
+-p 8858:8858 \
+bladex/sentinel-dashboard
+```
+
+```
+docker run -d --name minio \
+-p 9000:9000 \
+-e "MINIO_ACCESS_KEY=admin" \
+-e "MINIO_SECRET_KEY=chimanloo1004" \
+-v ~/docker/minio/data:/data \
+-v ~/docker/minio/config:/root/.minio \
+minio/minio server /data
+```
+
+```
+docker run -d --name test \
+-p 7474:7474 \
+-p 7687:7687 \
+-v ~/docker/neo4j/data:/data \
+-v ~/docker/neo4j/logs:/logs \
+-v ~/docker/neo4j/conf:/var/lib/neo4j/conf  \
+-v ~/docker/neo4j/import:/var/lib/neo4j/import \
+-e NEO4J_AUTH=neo4j/admin \
+neo4j
 ```
 
